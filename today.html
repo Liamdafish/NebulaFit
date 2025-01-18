@@ -6,10 +6,13 @@
   <title>Today | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
+  <!-- Font Awesome CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Particles.js Script -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
+    /* Ensure particles cover the entire background */
     #particles-js {
       position: absolute;
       top: 0;
@@ -19,6 +22,7 @@
       z-index: -1;
     }
 
+    /* Content styling to ensure visibility */
     .content {
       position: relative;
       z-index: 1;
@@ -26,10 +30,17 @@
   </style>
 </head>
 <body>
+  <!-- Particles Background -->
   <div id="particles-js"></div>
 
   <nav class="tabbar">
-    <!-- Tab links (same as in your previous code) -->
+    <!-- Tab links -->
+    <a class="tab-link" href="today.html">Today</a>
+    <a class="tab-link" href="week.html">Week</a>
+    <a class="tab-link" href="exercises.html">Exercises</a>
+    <a class="tab-link" href="stats.html">Stats</a>
+    <a class="tab-link" href="achievements.html">Achievements</a>
+    <a class="tab-link" href="settings.html">Settings</a>
   </nav>
 
   <div class="content">
@@ -37,7 +48,25 @@
       <h1>Today</h1>
     </header>
     <main>
-      <!-- Log Fitness Data Section (same as before) -->
+      <!-- Log Fitness Data -->
+      <section>
+        <h2>Log Fitness Data</h2>
+        <div class="inputs">
+          <div>
+            <label for="steps">Steps</label>
+            <input id="steps" type="number">
+          </div>
+          <div>
+            <label for="water">Water Intake (L)</label>
+            <input id="water" type="number" step="0.1">
+          </div>
+          <div>
+            <label for="sleep">Sleep (Hours)</label>
+            <input id="sleep" type="number" step="0.1">
+          </div>
+        </div>
+        <button id="submit">Submit</button>
+      </section>
 
       <!-- New Section for Food Search -->
       <section>
@@ -54,11 +83,27 @@
         </div>
       </section>
 
-      <!-- Fitness Logs Table Section (same as before) -->
+      <!-- Fitness Logs Table -->
+      <section>
+        <h2>Fitness Logs</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Steps</th>
+              <th>Water Intake (L)</th>
+              <th>Sleep (Hours)</th>
+            </tr>
+          </thead>
+          <tbody id="logsSection">
+            <!-- Logs will be dynamically injected here -->
+          </tbody>
+        </table>
+      </section>
     </main>
   </div>
 
-  <!-- Particle.js Initialization -->
+  <!-- Particles.js Initialization -->
   <script>
     particlesJS('particles-js', {
       "particles": {
@@ -69,41 +114,50 @@
             "value_area": 800
           }
         },
-        "color": { "value": "#ffffff" },
-        "shape": { "type": "circle" },
-        "size": { "value": 3, "random": true },
-        "move": { "enable": true, "speed": 2, "direction": "none" }
+        "color": {
+          "value": "#ffffff"
+        },
+        "shape": {
+          "type": "circle"
+        },
+        "size": {
+          "value": 3,
+          "random": true
+        },
+        "move": {
+          "enable": true,
+          "speed": 2,
+          "direction": "none"
+        }
       }
     });
   </script>
 
-  <!-- Add JavaScript to handle FatSecret API calls -->
+  <!-- JavaScript to handle Spoonacular API request -->
   <script>
-    const clientId = 'YOUR_CLIENT_ID';  // Replace with your actual Client ID
-    const clientSecret = 'YOUR_CLIENT_SECRET';  // Replace with your actual Client Secret
-    const accessToken = 'YOUR_ACCESS_TOKEN';  // Replace with your actual Access Token (OAuth)
+    const apiKey = 'b86ae26b7f844ead91ce96df1eb8df0c';  // Spoonacular API key
 
     async function fetchFoodData(foodItem) {
-      const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=${foodItem}&oauth_consumer_key=${clientId}&oauth_token=${accessToken}`;
+      const url = `https://api.spoonacular.com/food/search?query=${foodItem}&apiKey=${apiKey}&number=1`;
 
       try {
         const response = await fetch(url);
         const data = await response.json();
 
-        if (data.foods && data.foods.food.length > 0) {
-          const food = data.foods.food[0];  // Get the first food item from the results
+        if (data.results && data.results.length > 0) {
+          const food = data.results[0];
           return {
-            name: food.food_name,
-            calories: food.nutrition_calories,
-            servingSize: food.serving_size,
-            servingUnit: food.serving_unit
+            name: food.title,
+            calories: food.nutrition.nutrients[0].amount,
+            servingSize: food.servingSize,
+            image: food.image
           };
         } else {
-          return null;  // No food found
+          return null;
         }
       } catch (error) {
         console.error('Error fetching food data:', error);
-        return null;  // Handle any errors
+        return null;
       }
     }
 
@@ -120,17 +174,16 @@
       foodResultsContainer.innerHTML = '';  // Clear previous results
 
       if (foodData) {
-        // Display the food information
         const foodResult = document.createElement('div');
         foodResult.classList.add('food-result');
         foodResult.innerHTML = `
           <h3>${foodData.name}</h3>
           <p><strong>Calories:</strong> ${foodData.calories} kcal</p>
-          <p><strong>Serving Size:</strong> ${foodData.servingSize} ${foodData.servingUnit}</p>
+          <p><strong>Serving Size:</strong> ${foodData.servingSize}</p>
+          <img src="https://spoonacular.com/recipeImages/${foodData.image}" alt="${foodData.name}">
         `;
         foodResultsContainer.appendChild(foodResult);
       } else {
-        // Display a message if no food was found
         foodResultsContainer.innerHTML = '<p>No results found for the given food item.</p>';
       }
     });
