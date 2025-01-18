@@ -3,189 +3,156 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nutrition Tracker</title>
+  <title>Nutrition Tracker | Astronaut Fitness Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-  <style>
-    /* General Styles */
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f8f9fa;
-    }
-    h1, h2 {
-      text-align: center;
-      color: #333;
-    }
-    button {
-      font-size: 16px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    }
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Tab Bar */
-    .tabbar {
-      display: flex;
-      justify-content: space-around;
-      background-color: #007bff;
-      padding: 15px;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-    }
-    .tabbar a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 18px;
-    }
-
-    /* Content Layout */
-    .content {
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
-    }
-    .card {
-      background: linear-gradient(to bottom right, #ffffff, #f1f4f9);
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-      margin: 20px 0;
-      padding: 20px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Achievements Section */
-    .achievements {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-    }
-    .achievement {
-      width: 100px;
-      height: 100px;
-      background-color: #f1f4f9;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease-in-out;
-    }
-    .achievement.unlocked {
-      background-color: #ffd700;
-      color: #fff;
-      transform: scale(1.2);
-      box-shadow: 0 4px 10px rgba(255, 215, 0, 0.5);
-    }
-    .achievement i {
-      font-size: 32px;
-    }
-
-    /* Barcode Scanner */
-    #reader {
-      width: 300px;
-      height: 300px;
-      margin: 20px auto;
-      display: none;
-      border: 2px solid #007bff;
-      border-radius: 10px;
-    }
-  </style>
 </head>
 <body>
   <nav class="tabbar">
-    <a href="today.html">Today</a>
-    <a href="week.html">Week</a>
-    <a href="nutrition.html">Nutrition</a>
-    <a href="exercises.html">Exercises</a>
+    <a class="tab-link" href="today.html">Today</a>
+    <a class="tab-link" href="week.html">Week</a>
+    <a class="tab-link" href="nutrition.html">Nutrition</a>
+    <a class="tab-link" href="exercises.html">Exercises</a>
   </nav>
 
   <div class="content">
-    <h1>Nutrition Tracker</h1>
+    <header>
+      <h1>Nutrition Tracker</h1>
+    </header>
 
-    <!-- Achievements Section -->
-    <div class="card">
-      <h2>Your Achievements</h2>
-      <div class="achievements">
-        <div class="achievement" data-achievement="mars">
-          <i class="fas fa-tint"></i>
-        </div>
-        <div class="achievement" data-achievement="jupiter">
-          <i class="fas fa-shoe-prints"></i>
-        </div>
-        <div class="achievement" data-achievement="saturn">
-          <i class="fas fa-bed"></i>
-        </div>
-      </div>
-    </div>
+    <main>
+      <section>
+        <h2>Search for Food</h2>
+        <input type="text" id="foodSearch" placeholder="Search food...">
+        <button id="searchBtn">Search</button>
+      </section>
 
-    <!-- Food Search Section -->
-    <div class="card">
-      <h2>Search for Food</h2>
-      <input type="text" id="foodSearch" placeholder="Search for food...">
-      <button id="searchFoodBtn" style="background-color: #28a745; color: white;">Search</button>
-    </div>
+      <section id="foodListSection" style="display: none;">
+        <h2>Select Food and Servings</h2>
+        <ul id="foodList"></ul>
+        <input type="number" id="foodServings" placeholder="Number of servings" min="1" />
+        <button id="logFoodBtn">Log Food</button>
+      </section>
 
-    <!-- Food List Section -->
-    <div class="card" id="foodListSection" style="display: none;">
-      <h2>Food Results</h2>
-      <div id="foodList"></div>
-      <input type="number" id="foodServings" placeholder="Servings" min="1">
-      <button id="logFoodBtn" style="background-color: #17a2b8; color: white;">Log Food</button>
-    </div>
+      <section id="nutritionDetails" style="display: none;">
+        <h2>Nutrition Details</h2>
+        <p id="foodName"></p>
+        <p>Calories: <span id="calories"></span> kcal</p>
+        <p>Protein: <span id="protein"></span> g</p>
+        <p>Fat: <span id="fat"></span> g</p>
+        <p>Carbs: <span id="carbs"></span> g</p>
+        <p>Serving Size: <span id="servingSize"></span></p>
+      </section>
 
-    <!-- Barcode Scanner Section -->
-    <div class="card">
-      <h2>Scan Barcode</h2>
-      <button id="startScanBtn" style="background-color: #ff4757; color: white;">Start Barcode Scan</button>
-      <div id="reader"></div>
-    </div>
-
-    <!-- Logged Foods Section -->
-    <div class="card">
-      <h2>Logged Foods</h2>
-      <canvas id="foodChart"></canvas>
-    </div>
+      <section id="foodChartSection">
+        <h2>Logged Foods</h2>
+        <canvas id="foodChart"></canvas>
+      </section>
+    </main>
   </div>
 
   <script>
-    const userProgress = {
-      waterIntake: 7, // Consecutive days of meeting the water goal
-      steps: 10, // Consecutive days of meeting the step goal
-      sleep: 12, // Consecutive days of meeting the sleep goal
-    };
-    const achievementsCriteria = {
-      mars: { type: 'waterIntake', goal: 7 },
-      jupiter: { type: 'steps', goal: 14 },
-      saturn: { type: 'sleep', goal: 14 },
-    };
+    const API_URL = 'https://api.edamam.com/api/food-database/v2/parser';
+    const API_KEY = 'a00e1fa1cfc5ab2e105d054726b5b874'; // Provided API key
+    const APP_ID = 'deeb16df'; // Provided application ID
 
-    function updateAchievements() {
-      const achievements = document.querySelectorAll('.achievement');
-      achievements.forEach((achievement) => {
-        const key = achievement.dataset.achievement;
-        if (userProgress[achievementsCriteria[key].type] >= achievementsCriteria[key].goal) {
-          achievement.classList.add('unlocked');
+    // DOM Elements
+    const searchBtn = document.getElementById('searchBtn');
+    const foodSearch = document.getElementById('foodSearch');
+
+    const foodListSection = document.getElementById('foodListSection');
+    const foodList = document.getElementById('foodList');
+    const foodServings = document.getElementById('foodServings');
+    const logFoodBtn = document.getElementById('logFoodBtn');
+    const nutritionDetails = document.getElementById('nutritionDetails');
+    const foodName = document.getElementById('foodName');
+    const calories = document.getElementById('calories');
+    const protein = document.getElementById('protein');
+    const fat = document.getElementById('fat');
+    const carbs = document.getElementById('carbs');
+    const servingSize = document.getElementById('servingSize');
+    const foodChartSection = document.getElementById('foodChartSection');
+
+    const loggedFoods = [];
+
+    // Search food on button click
+    searchBtn.addEventListener('click', () => {
+      const query = foodSearch.value.trim();
+      if (query) {
+        fetchFoodData(query);
+      }
+    });
+
+    // Fetch food data from API
+    async function fetchFoodData(query) {
+      const response = await fetch(`${API_URL}?app_id=${APP_ID}&app_key=${API_KEY}&ingr=${query}`);
+      const data = await response.json();
+      displayFoodList(data.hints);
+    }
+
+    // Display food list
+    function displayFoodList(foodItems) {
+      foodListSection.style.display = 'block';
+      foodList.innerHTML = '';
+      foodItems.forEach(item => {
+        const foodItem = document.createElement('li');
+        foodItem.innerHTML = `
+          <span>${item.food.label}</span>
+          <button onclick="selectFood(${JSON.stringify(item.food.nutrients)}, '${item.food.label}')">Select</button>
+        `;
+        foodList.appendChild(foodItem);
+      });
+    }
+
+    // Select food and display nutrition details
+    function selectFood(nutrients, name) {
+      foodName.textContent = name;
+      calories.textContent = nutrients.ENERC_KCAL;
+      protein.textContent = nutrients.PROCNT;
+      fat.textContent = nutrients.FAT;
+      carbs.textContent = nutrients.CHOCDF;
+      servingSize.textContent = '1 serving';
+      nutritionDetails.style.display = 'block';
+
+      // Log food to chart
+      logFoodBtn.onclick = () => {
+        const servings = foodServings.value || 1;
+        loggedFoods.push({
+          name: name,
+          calories: nutrients.ENERC_KCAL * servings,
+          protein: nutrients.PROCNT * servings,
+          fat: nutrients.FAT * servings,
+          carbs: nutrients.CHOCDF * servings,
+        });
+        renderChart();
+      };
+    }
+
+    // Render chart with logged foods
+    function renderChart() {
+      const ctx = document.getElementById('foodChart').getContext('2d');
+      const foodData = loggedFoods.map(food => ({
+        label: food.name,
+        data: [food.calories, food.protein, food.fat, food.carbs],
+      }));
+      const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Calories', 'Protein', 'Fat', 'Carbs'],
+          datasets: foodData,
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
         }
       });
     }
-    document.addEventListener('DOMContentLoaded', updateAchievements);
-
-    // Additional QR scanner and food logging code can be added here
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
