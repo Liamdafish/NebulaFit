@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile | Astronaut Fitness Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #1b2735, #090a0f);
+      color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #81c7f5;
+    }
+
+    .profile-section {
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    p {
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: none;
+      background: #262626;
+      color: white;
+    }
+
+    input:focus {
+      outline: 2px solid #ec4899;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-image: linear-gradient(to right, #ec4899, #8b5cf6);
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+      transform: scale(1.02);
+    }
+
+    #next-btn {
+      margin-top: 20px;
+      background-color: #00b894;
+      border-radius: 5px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="welcome-message">Hello, [username]</h1>
+    <div class="profile-section">
+      <label>Email:</label>
+      <p id="email">example@example.com</p>
+    </div>
+    <div class="profile-section">
+      <label>Age:</label>
+      <input type="number" id="age" value="" />
+    </div>
+    <div class="profile-section">
+      <label>Weight (lbs):</label>
+      <input type="number" id="weight" value="" />
+    </div>
+    <div class="profile-section">
+      <label>Height (ft, in):</label>
+      <input type="number" id="height-feet" placeholder="Feet" />
+      <input type="number" id="height-inches" placeholder="Inches" />
+    </div>
+    <div class="profile-section">
+      <label>BMI:</label>
+      <p id="bmi">N/A</p>
+    </div>
+    <div class="profile-section">
+      <label>Change Password:</label>
+      <input type="password" id="new-password" placeholder="Enter new password" />
+    </div>
+    <button class="btn" onclick="saveProfile()">Save Changes</button>
+    <button id="next-btn" class="btn" onclick="goToNextPage()">Next</button>
+  </div>
+
+  <script>
+    // Populate profile data
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentUser = sessionStorage.getItem("currentUser");
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find((u) => u.email === currentUser);
+
+      if (!user) {
+        alert("User not found. Please log in.");
+        window.location.href = "login_signup.html";
+        return;
+      }
+
+      document.getElementById("welcome-message").textContent = `Hello, ${user.email.split("@")[0]}`;
+      document.getElementById("email").textContent = user.email;
+      document.getElementById("age").value = user.age || "";
+      document.getElementById("weight").value = user.weight || "";
+      document.getElementById("height-feet").value = user.heightFeet || "";
+      document.getElementById("height-inches").value = user.heightInches || "";
+      document.getElementById("bmi").textContent = user.bmi || "N/A";
+    });
+
+    // Save profile changes
+    function saveProfile() {
+      const currentUser = sessionStorage.getItem("currentUser");
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find((u) => u.email === currentUser);
+
+      if (!user) return;
+
+      const age = document.getElementById("age").value;
+      const weight = document.getElementById("weight").value;
+      const heightFeet = document.getElementById("height-feet").value;
+      const heightInches = document.getElementById("height-inches").value;
+      const newPassword = document.getElementById("new-password").value;
+
+      if (age) user.age = age;
+      if (weight) user.weight = weight;
+      if (heightFeet) user.heightFeet = heightFeet;
+      if (heightInches) user.heightInches = heightInches;
+
+      // Calculate BMI
+      const heightInMeters = ((heightFeet * 12) + parseInt(heightInches)) * 0.0254;
+      user.bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
+
+      if (newPassword) user.password = btoa(newPassword);
+
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Profile updated successfully!");
+      document.getElementById("bmi").textContent = user.bmi;
+    }
+
+    // Handle "Next" button click to go back to the index page
+    function goToNextPage() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
