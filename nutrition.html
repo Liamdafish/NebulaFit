@@ -6,23 +6,11 @@
   <title>Nutrition | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
-  <!-- Font Awesome CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <!-- Particles.js Script -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <!-- Chart.js Script -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  
   <style>
-    /* Basic Styling */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #1a1a1a;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-    }
-
+    /* Styling for the particles background */
     #particles-js {
       position: absolute;
       top: 0;
@@ -32,316 +20,224 @@
       z-index: -1;
     }
 
+    /* Content styles */
     .content {
-      padding: 20px;
+      position: relative;
       z-index: 1;
+      padding-left: 270px; /* Adjusted to leave space for the tabbar */
+      padding-top: 60px;
     }
 
-    /* Navbar Styling */
-    nav {
-      background-color: #333;
-      padding: 10px;
-      text-align: center;
-    }
-
-    nav a {
-      color: #fff;
-      margin: 0 15px;
-      text-decoration: none;
-      font-size: 18px;
-    }
-
-    nav a:hover {
-      color: #ff6347;
-    }
-
-    /* Popup Modal */
-    .popup {
-      display: none;
+    /* Sidebar Styling */
+    .tabbar {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
+      height: 100vh;
+      width: 250px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1rem 0;
     }
 
-    .popup-content {
+    img.trophy-icon {
+      width: 30px;
+      height: auto;
+      display: inline-block;
+      margin-bottom: 0;
+    }
+
+    .tabbar a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      padding: 1rem;
+      color: #bbb;
+      transition: color 0.3s, background 0.3s;
+    }
+
+    .tabbar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #81c7f5;
+    }
+
+    .tabbar a.active {
+      background: rgba(81, 199, 245, 0.2);
+      color: #81c7f5;
+    }
+
+    .tabbar .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-bottom: 0.5rem;
+      fill: currentColor;
+    }
+
+    .tabbar span {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    /* Nutrition search and options */
+    .nutrition-search {
+      margin: 1rem;
+      text-align: center;
+    }
+
+    .nutrition-search input {
+      padding: 10px;
+      width: 80%;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .nutrition-options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .nutrition-option {
       background-color: #333;
       padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      width: 300px;
-    }
-
-    .popup-content input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      background-color: #444;
-      border: none;
+      border-radius: 8px;
       color: white;
-      border-radius: 5px;
-    }
-
-    .popup-content button {
-      background-color: #ff6347;
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .popup-content button:hover {
-      background-color: #ff4500;
-    }
-
-    /* Food List and Details */
-    .food-list {
-      margin-top: 20px;
-      list-style: none;
-      padding: 0;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .food-list li {
-      cursor: pointer;
-      padding: 10px;
-      background-color: #333;
-      margin-bottom: 5px;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
-
-    .food-list li:hover {
-      background-color: #555;
-    }
-
-    .food-info {
-      margin-top: 20px;
-    }
-
-    .serving-size {
-      margin-top: 10px;
-    }
-
-    .nutrition-details {
-      margin-top: 20px;
-    }
-
-    /* Bar Chart Styling */
-    .chart-container {
-      margin-top: 30px;
+      width: 200px;
       text-align: center;
+      transition: transform 0.3s ease-in-out;
     }
 
-    canvas {
-      max-width: 100%;
-      height: 250px; /* Adjusted height for graph */
+    .nutrition-option.small {
+      width: 150px; /* Reduced width for smaller options */
+      font-size: 0.8rem;
     }
 
-    /* Table Styling */
+    /* Table styling */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 30px;
+      color: #fff; 
     }
 
-    table, th, td {
-      border: 1px solid #333;
+    table th, table td {
+      padding: 8px 12px;
+      text-align: center;
+      border: 1px solid #ddd;
     }
 
-    th, td {
-      padding: 10px;
-      text-align: left;
-    }
-
-    th {
+    table th {
       background-color: #333;
+      color: #fff; 
     }
 
-    tr:nth-child(even) {
-      background-color: #444;
+    table tbody tr:nth-child(even) {
+      background-color: #444; 
     }
 
-    /* Delete Button Styling */
-    .delete-btn {
-      background-color: #ff6347;
-      color: white;
-      padding: 5px 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 12px;
+    table tbody tr:nth-child(odd) {
+      background-color: #333; 
     }
 
-    .delete-btn:hover {
-      background-color: #ff4500;
+    table th, table td {
+      padding: 10px;
+    }
+
+    table th {
+      text-transform: uppercase;
     }
   </style>
 </head>
 <body>
-
   <div id="particles-js"></div>
 
-  <!-- Navbar -->
-  <nav>
-    <a href="#">Home</a>
-    <a href="#">Foods</a>
-    <a href="#">Log</a>
-    <a href="#">Profile</a>
+  <nav class="tabbar">
+    <a class="tab-link" href="today.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
+      </svg>
+      <span>Today</span>
+    </a>
+    
+    <a class="tab-link active" href="nutrition.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <span>Nutrition</span>
+    </a>
+    
+    <a class="tab-link" href="week.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <span>Week</span>
+    </a>
+    
+    <a class="tab-link" href="exercises.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      <span>Exercises</span>
+    </a>
+    
+    <a class="tab-link" href="stats.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 00-2-2H9m6 0V9"></path>
+      </svg>
+      <span>Stats</span>
+    </a>
   </nav>
 
   <div class="content">
-    <header>
-      <h1>Search for Your Food and Log Your Intake</h1>
-    </header>
-
-    <!-- Add Food Button -->
-    <button id="add-food-btn">Add Food</button>
-
-    <section class="input-container">
-      <label for="food-search">Search for a food item:</label>
-      <input type="text" id="food-search" placeholder="Enter food name" />
-      <button id="search-btn">Search</button>
-    </section>
-
-    <section>
-      <h2>Food Results</h2>
-      <ul id="food-list" class="food-list">
-        <!-- Food items will appear here -->
-      </ul>
-    </section>
-
-    <section class="food-info">
-      <h2>Food Details</h2>
-      <div id="food-details">
-        <!-- Food details will be shown here after selection -->
-      </div>
-
-      <div class="serving-size" id="serving-size-container" style="display:none;">
-        <label for="serving-size">Enter Custom Serving Size (in grams or cups):</label>
-        <input type="number" id="custom-serving-size" placeholder="Enter serving size" />
-      </div>
-
-      <div id="nutrition-details" class="nutrition-details">
-        <!-- Nutritional info for selected food -->
-      </div>
-    </section>
-
-    <section class="chart-container">
-      <h2>Nutrition Breakdown (Bar Graph)</h2>
-      <canvas id="nutrition-chart"></canvas>
-    </section>
-
-    <!-- Log Table -->
-    <section>
-      <h2>Food Log</h2>
-      <table id="food-log">
-        <thead>
-          <tr>
-            <th>Food</th>
-            <th>Serving Size</th>
-            <th>Calories</th>
-            <th>Time</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Food log entries will go here -->
-        </tbody>
-      </table>
-    </section>
-  </div>
-
-  <!-- Popup Modal for Adding Food -->
-  <div class="popup" id="food-popup">
-    <div class="popup-content">
-      <h3>Add Your Food</h3>
-      <input type="text" id="food-name" placeholder="Food Name" />
-      <input type="number" id="food-serving" placeholder="Serving Size (in grams)" />
-      <input type="number" id="food-calories" placeholder="Calories" />
-      <button id="add-food-submit">Add Food</button>
+    <h1>Nutrition Tracker</h1>
+    <div class="nutrition-search">
+      <input id="search" type="text" placeholder="Search for foods...">
     </div>
-  </div>
-
-  <!-- Confirmation Popup -->
-  <div class="popup" id="confirmation-popup">
-    <div class="popup-content">
-      <h3>Are you sure you want to add this food to your log?</h3>
-      <button id="confirm-add">Yes</button>
-      <button id="cancel-add">No</button>
+    <div class="nutrition-options" id="nutrition-options">
+      <!-- Options will be displayed here -->
     </div>
   </div>
 
   <script>
-    // Event listeners and functionality
-    const addFoodBtn = document.getElementById('add-food-btn');
-    const foodPopup = document.getElementById('food-popup');
-    const confirmationPopup = document.getElementById('confirmation-popup');
-    const confirmAddBtn = document.getElementById('confirm-add');
-    const cancelAddBtn = document.getElementById('cancel-add');
-    const foodSearchInput = document.getElementById('food-search');
-    const searchBtn = document.getElementById('search-btn');
-    const foodList = document.getElementById('food-list');
-    const foodDetails = document.getElementById('food-details');
-    const foodLogTable = document.getElementById('food-log').getElementsByTagName('tbody')[0];
-    const addFoodSubmitBtn = document.getElementById('add-food-submit');
-    const customServingSizeInput = document.getElementById('custom-serving-size');
-    let selectedFood = null;
+    const searchInput = document.getElementById('search');
+    const nutritionOptions = document.getElementById('nutrition-options');
 
-    // Show the food popup
-    addFoodBtn.addEventListener('click', () => {
-      foodPopup.style.display = 'flex';
-    });
+    // Sample data
+    const foods = [
+      { name: 'Apple', calories: 95 },
+      { name: 'Banana', calories: 105 },
+      { name: 'Orange', calories: 62 },
+      { name: 'Carrot', calories: 25 },
+      { name: 'Spinach', calories: 23 }
+    ];
 
-    // Hide the food popup
-    addFoodSubmitBtn.addEventListener('click', () => {
-      const foodName = document.getElementById('food-name').value;
-      const foodServing = document.getElementById('food-serving').value;
-      const foodCalories = document.getElementById('food-calories').value;
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      const filteredFoods = foods.filter(food => food.name.toLowerCase().includes(query));
 
-      if (foodName && foodServing && foodCalories) {
-        selectedFood = { name: foodName, serving: foodServing, calories: foodCalories };
-        confirmationPopup.style.display = 'flex';  // Show confirmation popup
-      } else {
-        alert('Please fill in all fields.');
-      }
-    });
+      // Clear previous options
+      nutritionOptions.innerHTML = '';
 
-    // Confirm adding food to log
-    confirmAddBtn.addEventListener('click', () => {
-      // Add to log table
-      const newRow = foodLogTable.insertRow();
-      newRow.innerHTML = `
-        <td>${selectedFood.name}</td>
-        <td>${selectedFood.serving}</td>
-        <td>${selectedFood.calories}</td>
-        <td>${new Date().toLocaleString()}</td>
-        <td><button class="delete-btn">Delete</button></td>
-      `;
-      selectedFood = null;
-      foodPopup.style.display = 'none';
-      confirmationPopup.style.display = 'none';
-    });
+      // Display filtered foods
+      filteredFoods.forEach(food => {
+        const foodElement = document.createElement('div');
+        foodElement.classList.add('nutrition-option');
+        foodElement.innerHTML = `<h3>${food.name}</h3><p>${food.calories} kcal</p>`;
 
-    // Cancel adding food
-    cancelAddBtn.addEventListener('click', () => {
-      confirmationPopup.style.display = 'none';
-    });
+        // Shrink the option if there's search input
+        if (query) {
+          foodElement.classList.add('small');
+        }
 
-    // Delete food log entry
-    foodLogTable.addEventListener('click', (e) => {
-      if (e.target && e.target.classList.contains('delete-btn')) {
-        const row = e.target.closest('tr');
-        row.remove();
-      }
+        nutritionOptions.appendChild(foodElement);
+      });
     });
   </script>
 </body>
