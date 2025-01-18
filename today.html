@@ -142,13 +142,11 @@
         
         // Display new search results
         data.results.forEach(food => {
-          // Get calories from nutrition info
-          const calories = food.nutrition.nutrients.find(nutrient => nutrient.name === "Calories")?.amount || 'N/A';
-
+          // When the user clicks the "Log Food" button, fetch detailed information
           const foodItem = document.createElement('li');
           foodItem.innerHTML = `
-            <strong>${food.name}</strong> - Calories: ${calories}
-            <button onclick="logFood('${food.name}', ${food.id}, ${calories})">Log Food</button>
+            <strong>${food.name}</strong>
+            <button onclick="logFood('${food.name}', ${food.id})">Log Food</button>
           `;
           searchResults.appendChild(foodItem);
         });
@@ -158,7 +156,13 @@
     }
 
     // Function to log the food with calories into the fitness logs
-    async function logFood(foodName, foodId, calories) {
+    async function logFood(foodName, foodId) {
+      // Fetch detailed nutritional info for the food
+      const nutritionResponse = await fetch(`https://api.spoonacular.com/food/ingredients/${foodId}/information?apiKey=${apiKey}`);
+      const nutritionData = await nutritionResponse.json();
+      const calories = nutritionData.nutrition.calories;
+
+      // Get the user input for steps, water, and sleep
       const steps = document.getElementById('steps').value;
       const water = document.getElementById('water').value;
       const sleep = document.getElementById('sleep').value;
