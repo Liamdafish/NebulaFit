@@ -283,7 +283,7 @@
 
       nutritionTableBody.appendChild(row);
       updateNutritionChart();
-      saveDataToCookies();
+      saveDataToLocalStorage();
     }
 
     function updateNutritionChart() {
@@ -329,24 +329,20 @@
       });
     }
 
-    function saveDataToCookies() {
-      const nutritionDataStr = JSON.stringify(nutritionData);
-      document.cookie = `nutritionData=${nutritionDataStr}; path=/; expires=${new Date(new Date().getTime() + 365*24*60*60*1000).toUTCString()}`;
+    function saveDataToLocalStorage() {
+      localStorage.setItem('nutritionData', JSON.stringify(nutritionData));
     }
 
-    function loadDataFromCookies() {
-      const cookies = document.cookie.split('; ');
-      const nutritionCookie = cookies.find(row => row.startsWith('nutritionData='));
-      if (nutritionCookie) {
-        const nutritionDataStr = nutritionCookie.split('=')[1];
-        nutritionData = JSON.parse(nutritionDataStr);
+    function loadDataFromLocalStorage() {
+      const storedData = localStorage.getItem('nutritionData');
+      if (storedData) {
+        nutritionData = JSON.parse(storedData);
         nutritionData.forEach(displayNutritionData);
       }
     }
 
     // Load saved data when the page is loaded
-    window.onload = loadDataFromCookies;
+    window.onload = loadDataFromLocalStorage;
   </script>
-
 </body>
 </html>
