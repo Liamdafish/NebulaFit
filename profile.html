@@ -83,6 +83,12 @@
       border-radius: 5px;
     }
 
+    /* Logout Button */
+    #logout-btn {
+      margin-top: 20px;
+      background-color: #e74c3c;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -115,6 +121,7 @@
     </div>
     <button class="btn" onclick="saveProfile()">Save Changes</button>
     <button id="next-btn" class="btn" onclick="goToNextPage()">Next</button>
+    <button id="logout-btn" class="btn" onclick="logout()">Logout</button>
   </div>
 
   <script>
@@ -172,6 +179,12 @@
     // Handle "Next" button click to go back to the index page
     function goToNextPage() {
       window.location.href = "index.html";
+    }
+
+    // Logout function
+    function logout() {
+      sessionStorage.removeItem("currentUser"); // Clear the current user session
+      window.location.href = "login_signup.html"; // Redirect to the login/signup page
     }
   </script>
 </body>
