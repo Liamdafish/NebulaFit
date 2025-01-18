@@ -50,9 +50,9 @@ function clearLogs() {
 document.addEventListener("DOMContentLoaded", () => {
   resetLogsAtMidnight(); // Start the reset process
   fillTable(); // Populate the logs table if any logs exist
-  updateProgressTracker(); // Ensure progress tracker is initialized
 });
 
+// Function to add data to localStorage
 function addToLocalStorage() {
   localStorage.setItem("date", JSON.stringify(date));
   localStorage.setItem("steps", JSON.stringify(steps));
@@ -60,6 +60,7 @@ function addToLocalStorage() {
   localStorage.setItem("sleep", JSON.stringify(sleep));
 }
 
+// Function to activate the edit mode
 function activateEdit(i) {
   stepsInput.value = steps[i];
   waterInput.value = water[i];
@@ -69,6 +70,7 @@ function activateEdit(i) {
   editSection.classList.remove("hidden");
 }
 
+// Function to cancel the edit mode
 function cancelEdit() {
   clearInputs();
   editIndex = -1;
@@ -76,6 +78,7 @@ function cancelEdit() {
   editSection.classList.add("hidden");
 }
 
+// Function to edit a row
 function editRow() {
   if (editIndex === -1) return;
   steps[editIndex] = stepsInput.value;
@@ -86,6 +89,7 @@ function editRow() {
   cancelEdit();
 }
 
+// Function to delete a row
 function deleteRow(i) {
   if (
     !confirm(
@@ -104,8 +108,14 @@ function deleteRow(i) {
   setTimeout(fillTable, 500);
 }
 
+// Function to fill the table with data
 function fillTable() {
   const tbody = document.getElementById("logsSection");
+  if (!tbody) {
+    console.error("logsSection not found in the DOM.");
+    return; // Exit if the element does not exist
+  }
+
   const rows = Math.max(steps.length, water.length, sleep.length);
   let html = "";
   for (let i = 0; i < rows; i++) {
@@ -131,7 +141,7 @@ function fillTable() {
   tbody.innerHTML = html;
 }
 
-// Calculate and update space progress tracker
+// Function to calculate space progress
 function calculateProgress() {
   const totalSteps = steps.reduce((sum, val) => sum + parseInt(val || 0, 10), 0);
   const distanceTraveled = totalSteps * 0.0001;
@@ -156,6 +166,7 @@ function calculateProgress() {
   return { currentPlanetIndex, progressPercent };
 }
 
+// Function to update progress tracker
 function updateProgressTracker() {
   const { currentPlanetIndex, progressPercent } = calculateProgress();
   const steps = document.querySelectorAll(".wizard-progress .step");
@@ -187,9 +198,11 @@ const sleepInput = document.getElementById("sleep");
 const submitButton = document.getElementById("submit");
 const editSection = document.getElementById("editSection");
 
+// Populate table and update progress tracker
 fillTable();
 updateProgressTracker();
 
+// Add event listener for submit button
 submitButton.addEventListener("click", () => {
   const s = stepsInput.value || null;
   const w = waterInput.value || null;
