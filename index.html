@@ -6,12 +6,13 @@
   <title>Today | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Particles.js Script -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
+    /* Ensure particles cover the entire background */
     #particles-js {
       position: absolute;
       top: 0;
@@ -21,6 +22,7 @@
       z-index: -1;
     }
 
+    /* Content styling to ensure visibility */
     .content {
       position: relative;
       z-index: 1;
@@ -28,10 +30,16 @@
   </style>
 </head>
 <body>
+  <!-- Particles Background -->
   <div id="particles-js"></div>
 
   <nav class="tabbar">
-    <!-- Add navigation links here -->
+    <a class="tab-link" href="today.html">Today</a>
+    <a class="tab-link" href="week.html">Week</a>
+    <a class="tab-link" href="exercises.html">Exercises</a>
+    <a class="tab-link" href="stats.html">Stats</a>
+    <a class="tab-link" href="achievements.html">Achievements</a>
+    <a class="tab-link" href="settings.html">Settings</a>
   </nav>
 
   <div class="content">
@@ -41,18 +49,37 @@
     <main>
       <!-- Log Fitness Data -->
       <section>
-        <h2>Log Food Data</h2>
+        <h2>Log Fitness Data</h2>
         <div class="inputs">
           <div>
-            <label for="foodSearch">Search for Food</label>
-            <input id="foodSearch" type="text" placeholder="Search for food...">
+            <label for="steps">Steps</label>
+            <input id="steps" type="number">
           </div>
-          <button id="searchFood" onclick="searchFood()">Search</button>
+          <div>
+            <label for="water">Water Intake (L)</label>
+            <input id="water" type="number" step="0.1">
+          </div>
+          <div>
+            <label for="sleep">Sleep (Hours)</label>
+            <input id="sleep" type="number" step="0.1">
+          </div>
         </div>
+        <button id="submit">Submit</button>
+      </section>
 
-        <div id="foodResults"></div>
-
-        <button id="submitFood">Submit Food</button>
+      <!-- New Section for Food Search -->
+      <section>
+        <h2>Search Foods for Caloric Information</h2>
+        <div class="inputs">
+          <div>
+            <label for="foodSearch">Enter Food Item</label>
+            <input id="foodSearch" type="text" placeholder="e.g., Apple">
+          </div>
+        </div>
+        <button id="searchFood">Search</button>
+        <div id="foodResults">
+          <!-- Food results will be displayed here -->
+        </div>
       </section>
 
       <!-- Fitness Logs Table -->
@@ -62,97 +89,103 @@
           <thead>
             <tr>
               <th>Date</th>
-              <th>Food</th>
-              <th>Calories</th>
-              <th>Edit</th>
-              <th>Delete</th>
+              <th>Steps</th>
+              <th>Water Intake (L)</th>
+              <th>Sleep (Hours)</th>
             </tr>
           </thead>
-          <tbody id="logsSection"></tbody>
+          <tbody id="logsSection">
+            <!-- Logs will be dynamically injected here -->
+          </tbody>
         </table>
       </section>
     </main>
   </div>
 
+  <!-- Particles.js Initialization -->
   <script>
     particlesJS('particles-js', {
       "particles": {
-        "number": { "value": 80, "density": { "enable": true, "value_area": 800 }},
-        "color": { "value": "#ffffff" },
-        "shape": { "type": "circle", "stroke": { "width": 0 }},
-        "size": { "value": 3, "random": true },
-        "move": { "enable": true, "speed": 2, "direction": "none", "random": true, "out_mode": "out" }
+        "number": {
+          "value": 80,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": {
+          "value": "#ffffff"
+        },
+        "shape": {
+          "type": "circle"
+        },
+        "size": {
+          "value": 3,
+          "random": true
+        },
+        "move": {
+          "enable": true,
+          "speed": 2,
+          "direction": "none"
+        }
       }
     });
+  </script>
 
-    // Get the client ID and client secret from your FatSecret API credentials
-    const clientId = 'YOUR_CLIENT_ID';
-    const clientSecret = '5f42c2ac6ac8431db8b6511eac435aa3';
+  <!-- JavaScript to handle Spoonacular API request -->
+  <script>
+    const apiKey = 'b86ae26b7f844ead91ce96df1eb8df0c';  // Spoonacular API key
 
-    // Function to get an access token (OAuth 2.0 Authentication)
-    async function getAccessToken() {
-      const response = await fetch('https://api.fatsecret.com/rest/server.api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-          'grant_type': 'client_credentials',
-          'client_id': clientId,
-          'client_secret': clientSecret
-        })
-      });
-      const data = await response.json();
-      return data.access_token;
+    async function fetchFoodData(foodItem) {
+      const url = `https://api.spoonacular.com/food/search?query=${foodItem}&apiKey=${apiKey}&number=1`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.results && data.results.length > 0) {
+          const food = data.results[0];
+          return {
+            name: food.title,
+            calories: food.nutrition.nutrients[0].amount,
+            servingSize: food.servingSize,
+            image: food.image
+          };
+        } else {
+          return null;
+        }
+      } catch (error) {
+        console.error('Error fetching food data:', error);
+        return null;
+      }
     }
 
-    // Function to search food
-    async function searchFood() {
-      const searchQuery = document.getElementById('foodSearch').value;
-      if (!searchQuery) {
-        alert('Please enter a food item to search for.');
+    document.getElementById('searchFood').addEventListener('click', async () => {
+      const foodSearch = document.getElementById('foodSearch').value;
+      if (!foodSearch) {
+        alert('Please enter a food item.');
         return;
       }
 
-      const accessToken = await getAccessToken();
-      const response = await fetch(`https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=${searchQuery}&access_token=${accessToken}`);
-      const data = await response.json();
+      const foodData = await fetchFoodData(foodSearch);
 
-      const foodResults = data.foods.food.map(food => {
-        return `
-          <div class="food-item">
-            <h3>${food.food_name}</h3>
-            <p>Calories: ${food.nutritional_contents ? food.nutritional_contents.calories : 'N/A'} kcal</p>
-            <button onclick="addFoodToLog('${food.food_name}', ${food.nutritional_contents ? food.nutritional_contents.calories : 0})">Add to Log</button>
-          </div>
+      const foodResultsContainer = document.getElementById('foodResults');
+      foodResultsContainer.innerHTML = '';  // Clear previous results
+
+      if (foodData) {
+        const foodResult = document.createElement('div');
+        foodResult.classList.add('food-result');
+        foodResult.innerHTML = `
+          <h3>${foodData.name}</h3>
+          <p><strong>Calories:</strong> ${foodData.calories} kcal</p>
+          <p><strong>Serving Size:</strong> ${foodData.servingSize}</p>
+          <img src="https://spoonacular.com/recipeImages/${foodData.image}" alt="${foodData.name}">
         `;
-      }).join('');
-      document.getElementById('foodResults').innerHTML = foodResults;
-    }
-
-    // Function to add food to the log
-    function addFoodToLog(foodName, calories) {
-      const logRow = document.createElement('tr');
-      logRow.innerHTML = `
-        <td>${new Date().toLocaleDateString()}</td>
-        <td>${foodName}</td>
-        <td>${calories}</td>
-        <td><button onclick="editRow(this)">Edit</button></td>
-        <td><button onclick="deleteRow(this)">Delete</button></td>
-      `;
-      document.getElementById('logsSection').appendChild(logRow);
-    }
-
-    // Function to delete a row
-    function deleteRow(button) {
-      const row = button.closest('tr');
-      row.remove();
-    }
-
-    // Function to edit a row (expandable based on your use case)
-    function editRow(button) {
-      alert('Edit functionality to be implemented');
-    }
+        foodResultsContainer.appendChild(foodResult);
+      } else {
+        foodResultsContainer.innerHTML = '<p>No results found for the given food item.</p>';
+      }
+    });
   </script>
 </body>
 </html>
