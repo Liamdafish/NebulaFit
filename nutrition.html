@@ -55,14 +55,59 @@
       color: #ff6347;
     }
 
-    .input-container {
-      margin-bottom: 20px;
+    /* Popup Modal */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
     }
 
+    .popup-content {
+      background-color: #333;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+
+    .popup-content input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #444;
+      border: none;
+      color: white;
+      border-radius: 5px;
+    }
+
+    .popup-content button {
+      background-color: #ff6347;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .popup-content button:hover {
+      background-color: #ff4500;
+    }
+
+    /* Food List and Details */
     .food-list {
       margin-top: 20px;
       list-style: none;
       padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
     }
 
     .food-list li {
@@ -98,7 +143,7 @@
 
     canvas {
       max-width: 100%;
-      height: 300px; /* Adjusted height for graph */
+      height: 250px; /* Adjusted height for graph */
     }
 
     /* Table Styling */
@@ -124,6 +169,21 @@
     tr:nth-child(even) {
       background-color: #444;
     }
+
+    /* Delete Button Styling */
+    .delete-btn {
+      background-color: #ff6347;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .delete-btn:hover {
+      background-color: #ff4500;
+    }
   </style>
 </head>
 <body>
@@ -142,6 +202,9 @@
     <header>
       <h1>Search for Your Food and Log Your Intake</h1>
     </header>
+
+    <!-- Add Food Button -->
+    <button id="add-food-btn">Add Food</button>
 
     <section class="input-container">
       <label for="food-search">Search for a food item:</label>
@@ -187,6 +250,7 @@
             <th>Serving Size</th>
             <th>Calories</th>
             <th>Time</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -196,132 +260,87 @@
     </section>
   </div>
 
+  <!-- Popup Modal for Adding Food -->
+  <div class="popup" id="food-popup">
+    <div class="popup-content">
+      <h3>Add Your Food</h3>
+      <input type="text" id="food-name" placeholder="Food Name" />
+      <input type="number" id="food-serving" placeholder="Serving Size (in grams)" />
+      <input type="number" id="food-calories" placeholder="Calories" />
+      <button id="add-food-submit">Add Food</button>
+    </div>
+  </div>
+
+  <!-- Confirmation Popup -->
+  <div class="popup" id="confirmation-popup">
+    <div class="popup-content">
+      <h3>Are you sure you want to add this food to your log?</h3>
+      <button id="confirm-add">Yes</button>
+      <button id="cancel-add">No</button>
+    </div>
+  </div>
+
   <script>
+    // Event listeners and functionality
+    const addFoodBtn = document.getElementById('add-food-btn');
+    const foodPopup = document.getElementById('food-popup');
+    const confirmationPopup = document.getElementById('confirmation-popup');
+    const confirmAddBtn = document.getElementById('confirm-add');
+    const cancelAddBtn = document.getElementById('cancel-add');
     const foodSearchInput = document.getElementById('food-search');
     const searchBtn = document.getElementById('search-btn');
     const foodList = document.getElementById('food-list');
-    const foodDetailsContainer = document.getElementById('food-details');
-    const servingSizeContainer = document.getElementById('serving-size-container');
-    const customServingSizeInput = document.getElementById('custom-serving-size');
-    const nutritionDetails = document.getElementById('nutrition-details');
-    const nutritionChartCanvas = document.getElementById('nutrition-chart');
+    const foodDetails = document.getElementById('food-details');
     const foodLogTable = document.getElementById('food-log').getElementsByTagName('tbody')[0];
+    const addFoodSubmitBtn = document.getElementById('add-food-submit');
+    const customServingSizeInput = document.getElementById('custom-serving-size');
+    let selectedFood = null;
 
-    const APP_ID = "b0c02042";  // Your Edamam Application ID
-    const APP_KEY = "c85342f02e2ce14196c6818dc0ec0d11";  // Your Edamam Application Key
+    // Show the food popup
+    addFoodBtn.addEventListener('click', () => {
+      foodPopup.style.display = 'flex';
+    });
 
-    let nutritionData = {
-      calories: 0,
-      protein: 0,
-      carbs: 0,
-      fat: 0
-    };
+    // Hide the food popup
+    addFoodSubmitBtn.addEventListener('click', () => {
+      const foodName = document.getElementById('food-name').value;
+      const foodServing = document.getElementById('food-serving').value;
+      const foodCalories = document.getElementById('food-calories').value;
 
-    async function fetchFoodData(query) {
-      const url = `https://api.edamam.com/api/food-database/v2/parser?app_id=${APP_ID}&app_key=${APP_KEY}&ingr=${encodeURIComponent(query)}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      return data;
-    }
+      if (foodName && foodServing && foodCalories) {
+        selectedFood = { name: foodName, serving: foodServing, calories: foodCalories };
+        confirmationPopup.style.display = 'flex';  // Show confirmation popup
+      } else {
+        alert('Please fill in all fields.');
+      }
+    });
 
-    function displayFoodList(foodItems) {
-      foodList.innerHTML = "";
-      foodItems.forEach((food, index) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = food.food.label;
-        listItem.onclick = () => displayFoodDetails(food.food, index);
-        foodList.appendChild(listItem);
-      });
-    }
-
-    function displayFoodDetails(food, index) {
-      const servings = food.servings || [];
-      const servingSize = servings.length > 0 ? servings[0].quantity : 1;
-
-      foodDetailsContainer.innerHTML = `
-        <h3>${food.label}</h3>
-        <img src="${food.image ? food.image : 'https://via.placeholder.com/150'}" alt="${food.label}" />
-        <p><strong>Calories:</strong> ${food.nutrients.ENERC_KCAL * servingSize} kcal</p>
-        <p><strong>Protein:</strong> ${food.nutrients.PROCNT * servingSize} g</p>
-        <p><strong>Carbs:</strong> ${food.nutrients.CHOCDF * servingSize} g</p>
-        <p><strong>Fat:</strong> ${food.nutrients.FAT * servingSize} g</p>
+    // Confirm adding food to log
+    confirmAddBtn.addEventListener('click', () => {
+      // Add to log table
+      const newRow = foodLogTable.insertRow();
+      newRow.innerHTML = `
+        <td>${selectedFood.name}</td>
+        <td>${selectedFood.serving}</td>
+        <td>${selectedFood.calories}</td>
+        <td>${new Date().toLocaleString()}</td>
+        <td><button class="delete-btn">Delete</button></td>
       `;
+      selectedFood = null;
+      foodPopup.style.display = 'none';
+      confirmationPopup.style.display = 'none';
+    });
 
-      servingSizeContainer.style.display = 'block';
-      customServingSizeInput.addEventListener('input', () => updateNutritionDetails(food));
-    }
+    // Cancel adding food
+    cancelAddBtn.addEventListener('click', () => {
+      confirmationPopup.style.display = 'none';
+    });
 
-    function updateNutritionDetails(food) {
-      const customServingSize = parseFloat(customServingSizeInput.value) || 1;
-      nutritionData = {
-        calories: food.nutrients.ENERC_KCAL * customServingSize,
-        protein: food.nutrients.PROCNT * customServingSize,
-        carbs: food.nutrients.CHOCDF * customServingSize,
-        fat: food.nutrients.FAT * customServingSize
-      };
-
-      nutritionDetails.innerHTML = `
-        <h3>Nutrition Info (for ${customServingSize} serving(s))</h3>
-        <p><strong>Calories:</strong> ${nutritionData.calories} kcal</p>
-        <p><strong>Protein:</strong> ${nutritionData.protein} g</p>
-        <p><strong>Carbs:</strong> ${nutritionData.carbs} g</p>
-        <p><strong>Fat:</strong> ${nutritionData.fat} g</p>
-      `;
-
-      updateBarChart();
-      logFood(food.label, customServingSize);
-    }
-
-    function updateBarChart() {
-      const chart = new Chart(nutritionChartCanvas, {
-        type: 'bar',
-        data: {
-          labels: ['Calories', 'Protein', 'Carbs', 'Fat'],
-          datasets: [{
-            label: 'Nutritional Breakdown',
-            data: [nutritionData.calories, nutritionData.protein, nutritionData.carbs, nutritionData.fat],
-            backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A5'],
-            borderColor: '#fff',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top'
-            },
-            tooltip: {
-              enabled: true
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-
-    function logFood(foodName, servingSize) {
-      const logRow = foodLogTable.insertRow();
-      const date = new Date();
-      const time = date.toLocaleTimeString();
-
-      logRow.innerHTML = `
-        <td>${foodName}</td>
-        <td>${servingSize}</td>
-        <td>${nutritionData.calories} kcal</td>
-        <td>${time}</td>
-      `;
-    }
-
-    searchBtn.addEventListener('click', async () => {
-      const foodQuery = foodSearchInput.value;
-      if (foodQuery) {
-        const foodData = await fetchFoodData(foodQuery);
-        displayFoodList(foodData.hints);
+    // Delete food log entry
+    foodLogTable.addEventListener('click', (e) => {
+      if (e.target && e.target.classList.contains('delete-btn')) {
+        const row = e.target.closest('tr');
+        row.remove();
       }
     });
   </script>
