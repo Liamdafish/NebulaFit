@@ -26,17 +26,22 @@
     .content {
       position: relative;
       z-index: 1;
+      padding-left: 270px; /* Adjusted to leave space for the tabbar */
       padding-top: 60px;
     }
 
-    /* Tab Bar Styles */
+    /* Tab Bar Styles (left-aligned) */
     .tabbar {
       background-color: #333;
-      display: flex;
-      justify-content: space-around;
+      width: 250px; /* Fixed width of 250px */
       position: fixed;
-      bottom: 0;
-      width: 100%;
+      top: 0;
+      left: 0;
+      height: 100vh; /* Full height of the viewport */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
       z-index: 10;
     }
 
@@ -49,6 +54,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      width: 100%;
     }
 
     .tab-link:hover {
@@ -80,7 +86,7 @@
 <body>
   <div id="particles-js"></div>
 
-  <!-- Fixed Navigation Bar -->
+  <!-- Fixed Navigation Bar (Left-Aligned) -->
   <nav class="tabbar">
     <a class="tab-link active" href="today.html">
       <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -153,13 +159,13 @@
             <tr>
               <th>Date</th>
               <th>Steps</th>
-              <th>Water Intake (L)</th>
-              <th>Sleep (Hours)</th>
-              <th>Edit</th>
-              <th>Delete</th>
+              <th>Water (L)</th>
+              <th>Sleep (hrs)</th>
             </tr>
           </thead>
-          <tbody id="logsTable"></tbody>
+          <tbody id="log-table">
+            <!-- Log entries will be displayed here -->
+          </tbody>
         </table>
       </section>
     </main>
@@ -172,68 +178,40 @@
     particlesJS('particles-js', {
       "particles": {
         "number": {
-          "value": 80,  // Number of particles
-          "density": {
-            "enable": true,
-            "value_area": 800
-          }
+          "value": 80, 
+          "density": { "enable": true, "value_area": 800 }
         },
-        "color": {
-          "value": "#ffffff"  // Color of particles
-        },
+        "color": { "value": "#ffffff" },
         "shape": {
-          "type": "circle",  // Shape of particles
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          }
+          "type": "circle", 
+          "stroke": { "width": 0, "color": "#000000" }
         },
         "opacity": {
           "value": 0.5,
           "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 1,
-            "opacity_min": 0.1,
-            "sync": false
-          }
+          "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
         },
         "size": {
-          "value": 3,
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 4,
-            "size_min": 0.1,
-            "sync": false
-          }
+          "value": 3, 
+          "random": true, 
+          "anim": { "enable": true, "speed": 4, "size_min": 0.1, "sync": false }
         },
         "move": {
-          "enable": true,
-          "speed": 2,
-          "direction": "none",
-          "random": true,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false,
-          "attract": {
-            "enable": false,
-            "rotateX": 600,
-            "rotateY": 1200
-          }
+          "enable": true, 
+          "speed": 2, 
+          "direction": "none", 
+          "random": true, 
+          "straight": false, 
+          "out_mode": "out", 
+          "bounce": false, 
+          "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 }
         }
       },
       "interactivity": {
-        "detect_on": "canvas",
+        "detect_on": "canvas", 
         "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "repulse"
-          },
-          "onclick": {
-            "enable": true,
-            "mode": "push"
-          }
+          "onhover": { "enable": true, "mode": "repulse" },
+          "onclick": { "enable": true, "mode": "push" }
         }
       },
       "retina_detect": true
