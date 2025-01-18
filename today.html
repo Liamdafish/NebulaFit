@@ -6,30 +6,37 @@
   <title>Today | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+  <style>
+    #particles-js {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
 </head>
 <body>
+  <div id="particles-js"></div>
+
+  <nav class="tabbar">
+    <!-- Tab links (same as in your previous code) -->
+  </nav>
+
   <div class="content">
     <header>
       <h1>Today</h1>
     </header>
     <main>
-      <!-- Food Data Search -->
-      <section>
-        <h2>Search for Food</h2>
-        <div>
-          <input type="text" id="foodInput" placeholder="Search for food (e.g., apple)" />
-          <button onclick="searchFood()">Search</button>
-        </div>
-        <div id="searchResults"></div>
-      </section>
-
-      <!-- Food Data Chart -->
-      <section>
-        <h2>Food Caloric Information</h2>
-        <canvas id="foodDataChart" width="400" height="200"></canvas>
-      </section>
-
       <!-- Log Fitness Data -->
       <section>
         <h2>Log Fitness Data</h2>
@@ -46,90 +53,117 @@
             <label for="sleep">Sleep (Hours)</label>
             <input id="sleep" type="number" step="0.1">
           </div>
+          <div>
+            <label for="calories">Calories Consumed</label>
+            <input id="calories" type="number">
+          </div>
         </div>
-        <button id="submit" onclick="addFitnessData()">Submit</button>
+        <button id="submit">Submit</button>
+        <div id="editSection" class="hidden">
+          <button id="cancelEdit" onclick="cancelEdit()">Cancel</button>
+          <button id="updateEntry" onclick="editRow()">Update</button>
+        </div>
       </section>
 
-      <!-- Fitness Log (Steps, Water, Sleep) -->
+      <!-- Fitness Logs Table -->
       <section>
-        <h2>Fitness Log</h2>
-        <div id="fitnessLog">
-          <p>Steps: <span id="logSteps">0</span></p>
-          <p>Water Intake (L): <span id="logWater">0</span></p>
-          <p>Sleep (Hours): <span id="logSleep">0</span></p>
-        </div>
+        <h2>Fitness Logs</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Steps</th>
+              <th>Water Intake (L)</th>
+              <th>Sleep (Hours)</th>
+              <th>Calories Consumed</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="logsSection">
+            <!-- Logs will be dynamically injected here -->
+          </tbody>
+        </table>
       </section>
     </main>
   </div>
 
+  <!-- Particle.js Initialization -->
   <script>
-    // API Key and Base URL for Spoonacular API
-    const apiKey = 'b86ae26b7f844ead91ce96df1eb8df0c';
-    const baseURL = 'https://api.spoonacular.com/food/ingredients/search';
-
-    // Chart for Food Data (Calories)
-    const foodDataChartCtx = document.getElementById('foodDataChart').getContext('2d');
-    let foodDataChart = new Chart(foodDataChartCtx, {
-      type: 'pie',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Food Caloric Information',
-          data: [],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)'
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)'
-          ],
-          borderWidth: 1
-        }]
+    particlesJS('particles-js', {
+      "particles": {
+        "number": {
+          "value": 80,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": { "value": "#ffffff" },
+        "shape": { "type": "circle" },
+        "size": { "value": 3, "random": true },
+        "move": { "enable": true, "speed": 2, "direction": "none" }
       }
     });
+  </script>
 
-    // Function to search food via Spoonacular API
-    function searchFood() {
-      const query = document.getElementById('foodInput').value;
-      fetch(`${baseURL}?query=${query}&number=5&sort=calories&sortDirection=desc&apiKey=${apiKey}`)
-        .then(response => response.json())
-        .then(data => {
-          const searchResultsDiv = document.getElementById('searchResults');
-          searchResultsDiv.innerHTML = '';
-          let labels = [];
-          let calories = [];
-          data.results.forEach(item => {
-            labels.push(item.name);
-            calories.push(item.calories || 0); // Handling if calories data is missing
-            searchResultsDiv.innerHTML += `<p>${item.name} - ${item.calories || 'N/A'} Calories</p>`;
-          });
-          
-          // Update food data chart with food names and calories
-          foodDataChart.data.labels = labels;
-          foodDataChart.data.datasets[0].data = calories;
-          foodDataChart.update();
-        })
-        .catch(error => console.error('Error fetching food data:', error));
+  <!-- Add JavaScript to handle FatSecret API calls -->
+  <script>
+    const clientId = 'YOUR_CLIENT_ID';
+    const clientSecret = 'YOUR_CLIENT_SECRET';
+    const accessToken = 'YOUR_ACCESS_TOKEN';  // Get this using OAuth flow
+
+    async function fetchFoodData(foodItem) {
+      const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=${foodItem}&oauth_consumer_key=${clientId}&oauth_token=${accessToken}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.foods) {
+          const food = data.foods.food[0];
+          return food ? food.food_name + ' - ' + food.nutrition_calories + ' calories' : 'Food not found';
+        } else {
+          return 'No data found';
+        }
+      } catch (error) {
+        console.error('Error fetching food data:', error);
+        return 'Error fetching data';
+      }
     }
 
-    // Function to handle adding fitness data (steps, water, sleep)
-    function addFitnessData() {
-      const steps = document.getElementById('steps').value || 0;
-      const water = document.getElementById('water').value || 0;
-      const sleep = document.getElementById('sleep').value || 0;
+    document.getElementById('submit').addEventListener('click', async () => {
+      const steps = document.getElementById('steps').value;
+      const water = document.getElementById('water').value;
+      const sleep = document.getElementById('sleep').value;
+      const calories = document.getElementById('calories').value;
 
-      // Display the fitness data in the log
-      document.getElementById('logSteps').textContent = steps;
-      document.getElementById('logWater').textContent = water;
-      document.getElementById('logSleep').textContent = sleep;
-    }
+      const foodItem = "banana";  // Example food item
+      const foodData = await fetchFoodData(foodItem);
+
+      // Log fitness data including calories
+      const log = {
+        date: new Date().toLocaleDateString(),
+        steps,
+        water,
+        sleep,
+        calories,
+        foodData
+      };
+
+      // Inject log into table
+      const tableBody = document.getElementById('logsSection');
+      const row = tableBody.insertRow();
+      row.innerHTML = `
+        <td>${log.date}</td>
+        <td>${log.steps}</td>
+        <td>${log.water}</td>
+        <td>${log.sleep}</td>
+        <td>${log.calories} / ${log.foodData}</td>
+        <td><button>Edit</button></td>
+        <td><button>Delete</button></td>
+      `;
+    });
   </script>
 </body>
 </html>
