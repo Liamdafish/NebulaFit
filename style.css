@@ -10,9 +10,18 @@ body {
   background: radial-gradient(circle at top, #1b2735, #090a0f);
   color: #f5f5f5;
   line-height: 1.6;
+  position: relative;
 }
 
-
+/* Particles Background */
+#particles-js {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
 
 /* Sidebar Styling */
 .tabbar {
@@ -29,13 +38,11 @@ body {
   padding: 1rem 0;
 }
 
-
- img.trophy-icon {
+img.trophy-icon {
   width: 30px;
   height: auto;
   display: inline-block;
-  margin-bottom: px; 
-   
+  margin-bottom: px;
 }
 
 .tabbar a {
@@ -322,7 +329,6 @@ tbody > tr:hover {
   margin-top: 10px;
   color: #81c7f5;
 }
-
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
