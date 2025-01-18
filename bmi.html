@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMI Calculator | Astronaut Fitness Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #1b2735, #090a0f);
+      color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #81c7f5;
+    }
+
+    .bmi-section {
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: none;
+      background: #262626;
+      color: white;
+    }
+
+    input:focus {
+      outline: 2px solid #ec4899;
+    }
+
+    .result {
+      background-color: #333;
+      padding: 12px;
+      border-radius: 5px;
+      font-size: 1.5rem;
+      text-align: center;
+      color: #ec4899;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-image: linear-gradient(to right, #ec4899, #8b5cf6);
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+      transform: scale(1.02);
+    }
+
+    #next-btn {
+      margin-top: 20px;
+      background-color: #00b894;
+      border-radius: 5px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>BMI Calculator</h1>
+    <div class="bmi-section">
+      <label>Weight (lbs):</label>
+      <input type="number" id="weight" placeholder="Enter your weight in pounds" required />
+    </div>
+    <div class="bmi-section">
+      <label>Height (ft):</label>
+      <input type="number" id="height-feet" placeholder="Enter your height in feet" required />
+    </div>
+    <div class="bmi-section">
+      <label>Height (inches):</label>
+      <input type="number" id="height-inches" placeholder="Enter your height in inches" required />
+    </div>
+    <button class="btn" onclick="calculateBMI()">Calculate BMI</button>
+
+    <div class="bmi-section">
+      <label>Your BMI:</label>
+      <p id="bmi-result" class="result">N/A</p>
+    </div>
+    
+    <button id="next-btn" class="btn" onclick="goToNextPage()">Next</button>
+  </div>
+
+  <script>
+    function calculateBMI() {
+      const weight = document.getElementById("weight").value;
+      const heightFeet = document.getElementById("height-feet").value;
+      const heightInches = document.getElementById("height-inches").value;
+
+      if (!weight || !heightFeet || !heightInches) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      // Convert height to inches
+      const totalHeightInInches = (heightFeet * 12) + parseInt(heightInches);
+
+      // Convert height to meters
+      const heightInMeters = totalHeightInInches * 0.0254;
+
+      // Calculate BMI
+      const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
+
+      // Display BMI result
+      document.getElementById("bmi-result").textContent = bmi;
+
+      // Save the BMI and user data into localStorage
+      const currentUser = sessionStorage.getItem("currentUser");
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find((u) => u.email === currentUser);
+      if (user) {
+        user.weight = weight;
+        user.heightFeet = heightFeet;
+        user.heightInches = heightInches;
+        user.bmi = bmi;
+        localStorage.setItem("users", JSON.stringify(users));
+      }
+    }
+
+    function goToNextPage() {
+      const currentUser = sessionStorage.getItem("currentUser");
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find((u) => u.email === currentUser);
+
+      if (!user || !user.weight || !user.heightFeet || !user.heightInches) {
+        alert("Please fill in all required information.");
+        return;
+      }
+
+      // Redirect to the index page after successful BMI entry
+      window.location.href = "index.html";
+    }
+
+    // Check if the user has already filled in their details and redirect them
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentUser = sessionStorage.getItem("currentUser");
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find((u) => u.email === currentUser);
+
+      if (user && user.weight && user.heightFeet && user.heightInches) {
+        // User has already filled in their details, go straight to index.html
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>
