@@ -3,192 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nutrition Tracker | Astronaut Fitness Tracker</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Barcode scanner library -->
+  <title>Test Barcode Scanner</title>
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
-  <nav class="tabbar">
-    <a class="tab-link" href="today.html">Today</a>
-    <a class="tab-link" href="week.html">Week</a>
-    <a class="tab-link" href="nutrition.html">Nutrition</a>
-    <a class="tab-link" href="exercises.html">Exercises</a>
-  </nav>
-
-  <div class="content">
-    <header>
-      <h1>Nutrition Tracker</h1>
-    </header>
-
-    <main>
-      <section>
-        <h2>Search for Food</h2>
-        <input type="text" id="foodSearch" placeholder="Search food...">
-        <button id="searchBtn">Search</button>
-      </section>
-
-      <section id="foodListSection" style="display: none;">
-        <h2>Select Food and Servings</h2>
-        <ul id="foodList"></ul>
-        <input type="number" id="foodServings" placeholder="Number of servings" min="1" />
-        <button id="logFoodBtn">Log Food</button>
-      </section>
-
-      <section id="nutritionDetails" style="display: none;">
-        <h2>Nutrition Details</h2>
-        <p id="foodName"></p>
-        <p>Calories: <span id="calories"></span> kcal</p>
-        <p>Protein: <span id="protein"></span> g</p>
-        <p>Fat: <span id="fat"></span> g</p>
-        <p>Carbs: <span id="carbs"></span> g</p>
-        <p>Serving Size: <span id="servingSize"></span></p>
-      </section>
-
-      <!-- Barcode Scanner -->
-      <section id="barcodeSection">
-        <button id="startScan">Scan Barcode</button>
-        <div id="reader" style="width: 300px; height: 300px; margin-top: 20px;"></div>
-      </section>
-
-      <section id="foodChartSection">
-        <h2>Logged Foods</h2>
-        <canvas id="foodChart"></canvas>
-      </section>
-    </main>
-  </div>
+  <h1>Barcode Scanner Test</h1>
+  <button id="startScan">Start Scan</button>
+  <div id="reader" style="width: 300px; height: 300px; margin-top: 20px;"></div>
 
   <script>
-    const API_URL = 'https://api.edamam.com/api/food-database/v2/parser';
-    const API_KEY = 'a00e1fa1cfc5ab2e105d054726b5b874'; // Provided API key
-    const APP_ID = 'deeb16df'; // Provided application ID
-
-    // DOM Elements
-    const searchBtn = document.getElementById('searchBtn');
-    const foodSearch = document.getElementById('foodSearch');
-    const foodListSection = document.getElementById('foodListSection');
-    const foodList = document.getElementById('foodList');
-    const foodServings = document.getElementById('foodServings');
-    const logFoodBtn = document.getElementById('logFoodBtn');
-    const nutritionDetails = document.getElementById('nutritionDetails');
-    const foodName = document.getElementById('foodName');
-    const calories = document.getElementById('calories');
-    const protein = document.getElementById('protein');
-    const fat = document.getElementById('fat');
-    const carbs = document.getElementById('carbs');
-    const servingSize = document.getElementById('servingSize');
-    const barcodeSection = document.getElementById('barcodeSection');
-    const readerElement = document.getElementById('reader');
     const startScanBtn = document.getElementById('startScan');
-    const foodChartSection = document.getElementById('foodChartSection');
+    const readerElement = document.getElementById('reader');
 
-    const loggedFoods = [];
-
-    // Search food on button click
-    searchBtn.addEventListener('click', () => {
-      const query = foodSearch.value.trim();
-      if (query) {
-        fetchFoodData(query);
-      }
-    });
-
-    // Fetch food data from API
-    async function fetchFoodData(query) {
-      const response = await fetch(`${API_URL}?app_id=${APP_ID}&app_key=${API_KEY}&ingr=${query}`);
-      const data = await response.json();
-      displayFoodList(data.hints);
-    }
-
-    // Display food list
-    function displayFoodList(foodItems) {
-      foodListSection.style.display = 'block';
-      foodList.innerHTML = '';
-      foodItems.forEach(item => {
-        const foodItem = document.createElement('li');
-        foodItem.innerHTML = `
-          <span>${item.food.label}</span>
-          <button onclick="selectFood(${JSON.stringify(item.food.nutrients)}, '${item.food.label}')">Select</button>
-        `;
-        foodList.appendChild(foodItem);
-      });
-    }
-
-    // Select food and display nutrition details
-    function selectFood(nutrients, name) {
-      foodName.textContent = name;
-      calories.textContent = nutrients.ENERC_KCAL;
-      protein.textContent = nutrients.PROCNT;
-      fat.textContent = nutrients.FAT;
-      carbs.textContent = nutrients.CHOCDF;
-      servingSize.textContent = '1 serving';
-      nutritionDetails.style.display = 'block';
-
-      // Log food to chart
-      logFoodBtn.onclick = () => {
-        const servings = foodServings.value || 1;
-        loggedFoods.push({
-          name: name,
-          calories: nutrients.ENERC_KCAL * servings,
-          protein: nutrients.PROCNT * servings,
-          fat: nutrients.FAT * servings,
-          carbs: nutrients.CHOCDF * servings,
-        });
-        renderChart();
-      };
-    }
-
-    // Render chart with logged foods
-    function renderChart() {
-      const ctx = document.getElementById('foodChart').getContext('2d');
-      const foodData = loggedFoods.map(food => ({
-        label: food.name,
-        data: [food.calories, food.protein, food.fat, food.carbs],
-      }));
-      const chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Calories', 'Protein', 'Fat', 'Carbs'],
-          datasets: foodData,
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-
-    // Start barcode scanning
     startScanBtn.addEventListener('click', () => {
-      // Make sure the 'reader' element is visible before starting the scanner
-      readerElement.style.display = 'block'; // Ensure the scanner box is visible
-      
+      console.log("Start Scan button clicked");
       const html5QrCode = new Html5Qrcode("reader");
       html5QrCode.start(
         { facingMode: "environment" }, 
         { fps: 10, qrbox: 250 },
         (decodedText) => {
-          console.log(decodedText);
-          fetchFoodByBarcode(decodedText);
+          console.log("Scanned Text:", decodedText); // Display scanned barcode text
+          alert("Scanned Text: " + decodedText); // Alert scanned barcode
         },
-        (errorMessage) => { 
-          console.error(errorMessage);
+        (errorMessage) => {
+          console.error("Scanning Error:", errorMessage); // Log scanning errors
         }
-      );
+      ).catch((err) => {
+        console.error("Failed to start scanner:", err);
+      });
     });
-
-    // Fetch food by barcode
-    async function fetchFoodByBarcode(barcode) {
-      const response = await fetch(`${API_URL}?app_id=${APP_ID}&app_key=${API_KEY}&barcode=${barcode}`);
-      const data = await response.json();
-      displayFoodList(data.hints);
-    }
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
