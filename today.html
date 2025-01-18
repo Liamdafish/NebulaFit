@@ -11,6 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* Styling the particles background */
     #particles-js {
       position: absolute;
       top: 0;
@@ -20,9 +21,11 @@
       z-index: -1;
     }
 
+    /* Content styles */
     .content {
       position: relative;
       z-index: 1;
+      padding-top: 60px; /* Adjusted to ensure content isn't hidden under fixed navbar */
     }
 
     .inputs {
@@ -36,6 +39,7 @@
       height: 400px;
     }
 
+    /* Tab Bar Styles */
     .tabbar {
       background-color: #333;
       overflow: hidden;
@@ -43,6 +47,8 @@
       top: 0;
       width: 100%;
       z-index: 10;
+      display: flex;
+      justify-content: center;
     }
 
     .tabbar a {
@@ -64,12 +70,18 @@
       color: white;
     }
 
+    /* Tab bar responsive behavior */
+    @media (max-width: 600px) {
+      .tabbar a {
+        padding: 10px 15px;
+      }
+    }
   </style>
 </head>
 <body>
   <div id="particles-js"></div>
 
-  <!-- Original Navbar -->
+  <!-- Fixed Navigation Bar -->
   <nav class="tabbar">
     <a href="index.html">Home</a>
     <a href="today.html" class="active">Today</a>
