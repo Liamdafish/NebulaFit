@@ -8,6 +8,8 @@
   <script src="script.js" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-3d"></script>
 
   <style>
     #particles-js {
@@ -22,6 +24,17 @@
     .content {
       position: relative;
       z-index: 1;
+    }
+
+    #nutritionChart, #caloriesChart, #stepsChart {
+      width: 400px;
+      height: 400px;
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
   </style>
 </head>
@@ -59,10 +72,6 @@
           </div>
         </div>
         <button id="submit">Submit</button>
-        <div id="editSection" class="hidden">
-          <button id="cancelEdit" onclick="cancelEdit()">Cancel</button>
-          <button id="updateEntry" onclick="editRow()">Update</button>
-        </div>
       </section>
 
       <!-- Fitness Logs Table -->
@@ -76,14 +85,25 @@
               <th>Water Intake (L)</th>
               <th>Sleep (Hours)</th>
               <th>Calories Consumed</th>
-              <th>Edit</th>
-              <th>Delete</th>
             </tr>
           </thead>
           <tbody id="logsSection">
             <!-- Logs will be dynamically injected here -->
           </tbody>
         </table>
+      </section>
+
+      <!-- Charts -->
+      <section>
+        <h2>Charts</h2>
+        <canvas id="nutritionChart"></canvas> <!-- 3D Pie Chart -->
+        <canvas id="caloriesChart"></canvas> <!-- Calories Bar Chart -->
+        <div id="stepsChart">
+          <h3>Steps, Water, and Sleep</h3>
+          <p>Steps: <span id="stepsValue">0</span></p>
+          <p>Water Intake: <span id="waterValue">0</span> L</p>
+          <p>Sleep: <span id="sleepValue">0</span> Hours</p>
+        </div>
       </section>
     </main>
   </div>
@@ -107,7 +127,7 @@
     });
   </script>
 
-  <!-- Add JavaScript to handle Spoonacular API calls -->
+  <!-- Add JavaScript to handle Spoonacular API calls and chart rendering -->
   <script>
     const apiKey = 'b86ae26b7f844ead91ce96df1eb8df0c';  // Replace with your actual API key
 
@@ -122,16 +142,22 @@
           const food = data.results[0];
           return {
             name: food.name,
-            calories: food.nutrition?.calories || 'No calorie data available'
+            calories: food.nutrition?.calories || 0,
+            protein: food.nutrition?.protein || 0,
+            carbs: food.nutrition?.carbs || 0,
+            fat: food.nutrition?.fat || 0
           };
         } else {
-          return { name: 'Food not found', calories: 'No data available' };
+          return { name: 'Food not found', calories: 0, protein: 0, carbs: 0, fat: 0 };
         }
       } catch (error) {
         console.error('Error fetching food data:', error);
-        return { name: 'Error', calories: 'Error fetching data' };
+        return { name: 'Error', calories: 0, protein: 0, carbs: 0, fat: 0 };
       }
     }
+
+    // Chart setup
+    let foodData = { protein: 0, carbs: 0, fat: 0, calories: 0 };
 
     document.getElementById('submit').addEventListener('click', async () => {
       const steps = document.getElementById('steps').value;
@@ -140,7 +166,7 @@
       const calories = document.getElementById('calories').value;
 
       const foodItem = "banana";  // Example food item, you can replace this with dynamic input
-      const foodData = await fetchFoodData(foodItem);
+      foodData = await fetchFoodData(foodItem);
 
       // Log fitness data including calories
       const log = {
@@ -161,10 +187,58 @@
         <td>${log.water}</td>
         <td>${log.sleep}</td>
         <td>${log.calories} / ${log.foodData.name} - ${log.foodData.calories} calories</td>
-        <td><button>Edit</button></td>
-        <td><button>Delete</button></td>
       `;
+
+      // Update charts
+      updateCharts(steps, water, sleep, calories, foodData);
     });
+
+    function updateCharts(steps, water, sleep, calories, foodData) {
+      // Update Text Chart
+      document.getElementById('stepsValue').textContent = steps;
+      document.getElementById('waterValue').textContent = water;
+      document.getElementById('sleepValue').textContent = sleep;
+
+      // Update Regular Chart (Calories)
+      const caloriesChart = new Chart(document.getElementById('caloriesChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Calories'],
+          datasets: [{
+            label: 'Calories Consumed',
+            data: [calories],
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          }]
+        }
+      });
+
+      // Update 3D Pie Chart (Nutrition)
+      const nutritionChart = new Chart(document.getElementById('nutritionChart'), {
+        type: 'pie',
+        data: {
+          labels: ['Protein', 'Carbs', 'Fat'],
+          datasets: [{
+            data: [foodData.protein, foodData.carbs, foodData.fat],
+            backgroundColor: ['#FF5733', '#33FF57', '#3357FF'],
+            borderColor: ['#FF5733', '#33FF57', '#3357FF'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return context.label + ': ' + context.raw + 'g';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
   </script>
 </body>
 </html>
