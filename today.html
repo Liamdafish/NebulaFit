@@ -37,54 +37,24 @@
       <h1>Today</h1>
     </header>
     <main>
-      <!-- Log Fitness Data -->
+      <!-- Log Fitness Data Section (same as before) -->
+
+      <!-- New Section for Food Search -->
       <section>
-        <h2>Log Fitness Data</h2>
+        <h2>Search Foods for Caloric Information</h2>
         <div class="inputs">
           <div>
-            <label for="steps">Steps</label>
-            <input id="steps" type="number">
-          </div>
-          <div>
-            <label for="water">Water Intake (L)</label>
-            <input id="water" type="number" step="0.1">
-          </div>
-          <div>
-            <label for="sleep">Sleep (Hours)</label>
-            <input id="sleep" type="number" step="0.1">
-          </div>
-          <div>
-            <label for="calories">Calories Consumed</label>
-            <input id="calories" type="number">
+            <label for="foodSearch">Enter Food Item</label>
+            <input id="foodSearch" type="text" placeholder="e.g., Apple">
           </div>
         </div>
-        <button id="submit">Submit</button>
-        <div id="editSection" class="hidden">
-          <button id="cancelEdit" onclick="cancelEdit()">Cancel</button>
-          <button id="updateEntry" onclick="editRow()">Update</button>
+        <button id="searchFood">Search</button>
+        <div id="foodResults">
+          <!-- Food results will be displayed here -->
         </div>
       </section>
 
-      <!-- Fitness Logs Table -->
-      <section>
-        <h2>Fitness Logs</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Steps</th>
-              <th>Water Intake (L)</th>
-              <th>Sleep (Hours)</th>
-              <th>Calories Consumed</th>
-              <th>Edit</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="logsSection">
-            <!-- Logs will be dynamically injected here -->
-          </tbody>
-        </table>
-      </section>
+      <!-- Fitness Logs Table Section (same as before) -->
     </main>
   </div>
 
@@ -109,9 +79,9 @@
 
   <!-- Add JavaScript to handle FatSecret API calls -->
   <script>
-    const clientId = 'YOUR_CLIENT_ID';
-    const clientSecret = 'YOUR_CLIENT_SECRET';
-    const accessToken = 'YOUR_ACCESS_TOKEN';  // Get this using OAuth flow
+    const clientId = 'YOUR_CLIENT_ID';  // Replace with your actual Client ID
+    const clientSecret = 'YOUR_CLIENT_SECRET';  // Replace with your actual Client Secret
+    const accessToken = 'YOUR_ACCESS_TOKEN';  // Replace with your actual Access Token (OAuth)
 
     async function fetchFoodData(foodItem) {
       const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=${foodItem}&oauth_consumer_key=${clientId}&oauth_token=${accessToken}`;
@@ -120,49 +90,49 @@
         const response = await fetch(url);
         const data = await response.json();
 
-        if (data.foods) {
-          const food = data.foods.food[0];
-          return food ? food.food_name + ' - ' + food.nutrition_calories + ' calories' : 'Food not found';
+        if (data.foods && data.foods.food.length > 0) {
+          const food = data.foods.food[0];  // Get the first food item from the results
+          return {
+            name: food.food_name,
+            calories: food.nutrition_calories,
+            servingSize: food.serving_size,
+            servingUnit: food.serving_unit
+          };
         } else {
-          return 'No data found';
+          return null;  // No food found
         }
       } catch (error) {
         console.error('Error fetching food data:', error);
-        return 'Error fetching data';
+        return null;  // Handle any errors
       }
     }
 
-    document.getElementById('submit').addEventListener('click', async () => {
-      const steps = document.getElementById('steps').value;
-      const water = document.getElementById('water').value;
-      const sleep = document.getElementById('sleep').value;
-      const calories = document.getElementById('calories').value;
+    document.getElementById('searchFood').addEventListener('click', async () => {
+      const foodSearch = document.getElementById('foodSearch').value;
+      if (!foodSearch) {
+        alert('Please enter a food item.');
+        return;
+      }
 
-      const foodItem = "banana";  // Example food item
-      const foodData = await fetchFoodData(foodItem);
+      const foodData = await fetchFoodData(foodSearch);
 
-      // Log fitness data including calories
-      const log = {
-        date: new Date().toLocaleDateString(),
-        steps,
-        water,
-        sleep,
-        calories,
-        foodData
-      };
+      const foodResultsContainer = document.getElementById('foodResults');
+      foodResultsContainer.innerHTML = '';  // Clear previous results
 
-      // Inject log into table
-      const tableBody = document.getElementById('logsSection');
-      const row = tableBody.insertRow();
-      row.innerHTML = `
-        <td>${log.date}</td>
-        <td>${log.steps}</td>
-        <td>${log.water}</td>
-        <td>${log.sleep}</td>
-        <td>${log.calories} / ${log.foodData}</td>
-        <td><button>Edit</button></td>
-        <td><button>Delete</button></td>
-      `;
+      if (foodData) {
+        // Display the food information
+        const foodResult = document.createElement('div');
+        foodResult.classList.add('food-result');
+        foodResult.innerHTML = `
+          <h3>${foodData.name}</h3>
+          <p><strong>Calories:</strong> ${foodData.calories} kcal</p>
+          <p><strong>Serving Size:</strong> ${foodData.servingSize} ${foodData.servingUnit}</p>
+        `;
+        foodResultsContainer.appendChild(foodResult);
+      } else {
+        // Display a message if no food was found
+        foodResultsContainer.innerHTML = '<p>No results found for the given food item.</p>';
+      }
     });
   </script>
 </body>
