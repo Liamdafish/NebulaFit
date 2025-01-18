@@ -27,6 +27,25 @@
       position: relative;
       z-index: 1;
     }
+
+    /* Food results styling */
+    #foodResults {
+      margin-top: 20px;
+    }
+
+    .food-result {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .food-result img {
+      max-width: 150px;
+      height: auto;
+      margin-top: 10px;
+    }
+
   </style>
 </head>
 <body>
@@ -34,7 +53,6 @@
   <div id="particles-js"></div>
 
   <nav class="tabbar">
-    <!-- Tab links -->
     <a class="tab-link" href="today.html">Today</a>
     <a class="tab-link" href="week.html">Week</a>
     <a class="tab-link" href="exercises.html">Exercises</a>
@@ -137,7 +155,8 @@
   <script>
     const apiKey = 'b86ae26b7f844ead91ce96df1eb8df0c';  // Spoonacular API key
 
-    async function fetchFoodData(foodItem) {
+    // Fetch food data based on the search query
+    async function fetchFoodId(foodItem) {
       const url = `https://api.spoonacular.com/food/search?query=${foodItem}&apiKey=${apiKey}&number=1`;
 
       try {
@@ -145,18 +164,33 @@
         const data = await response.json();
 
         if (data.results && data.results.length > 0) {
-          const food = data.results[0];
-          return {
-            name: food.title,
-            calories: food.nutrition.nutrients[0].amount,
-            servingSize: food.servingSize,
-            image: food.image
-          };
+          return data.results[0].id;  // Return the ID of the first result
         } else {
           return null;
         }
       } catch (error) {
         console.error('Error fetching food data:', error);
+        return null;
+      }
+    }
+
+    // Fetch detailed information based on the food ID
+    async function fetchFoodDetails(foodId) {
+      const url = `https://api.spoonacular.com/food/ingredients/${foodId}/information?apiKey=${apiKey}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        return {
+          name: data.name,
+          calories: data.nutrition.nutrients[0].amount,  // Calories per serving
+          servingSize: data.nutrition.nutrients[0].unit,  // Unit of the serving
+          image: data.image,
+          description: data.description  // Optional description of the food
+        };
+      } catch (error) {
+        console.error('Error fetching food details:', error);
         return null;
       }
     }
@@ -168,8 +202,13 @@
         return;
       }
 
-      const foodData = await fetchFoodData(foodSearch);
+      const foodId = await fetchFoodId(foodSearch);
+      if (!foodId) {
+        alert('Food not found.');
+        return;
+      }
 
+      const foodData = await fetchFoodDetails(foodId);
       const foodResultsContainer = document.getElementById('foodResults');
       foodResultsContainer.innerHTML = '';  // Clear previous results
 
@@ -178,13 +217,13 @@
         foodResult.classList.add('food-result');
         foodResult.innerHTML = `
           <h3>${foodData.name}</h3>
-          <p><strong>Calories:</strong> ${foodData.calories} kcal</p>
-          <p><strong>Serving Size:</strong> ${foodData.servingSize}</p>
-          <img src="https://spoonacular.com/recipeImages/${foodData.image}" alt="${foodData.name}">
+          <p><strong>Calories:</strong> ${foodData.calories} kcal per ${foodData.servingSize}</p>
+          <p><strong>Description:</strong> ${foodData.description || 'No description available.'}</p>
+          <img src="https://spoonacular.com/recipeImages/${foodData.image}" alt="${foodData.name}" />
         `;
         foodResultsContainer.appendChild(foodResult);
       } else {
-        foodResultsContainer.innerHTML = '<p>No results found for the given food item.</p>';
+        foodResultsContainer.innerHTML = '<p>No detailed information found for the given food item.</p>';
       }
     });
   </script>
