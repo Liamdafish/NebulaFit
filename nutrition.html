@@ -37,6 +37,24 @@
       z-index: 1;
     }
 
+    /* Navbar Styling */
+    nav {
+      background-color: #333;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    nav a:hover {
+      color: #ff6347;
+    }
+
     .input-container {
       margin-bottom: 20px;
     }
@@ -72,15 +90,15 @@
       margin-top: 20px;
     }
 
-    /* Pie Chart Styling */
-    .pie-chart-container {
+    /* Bar Chart Styling */
+    .chart-container {
       margin-top: 30px;
       text-align: center;
     }
 
     canvas {
       max-width: 100%;
-      height: 200px; /* Adjust the pie chart size */
+      height: 300px; /* Adjusted height for graph */
     }
 
     /* Table Styling */
@@ -112,6 +130,14 @@
 
   <div id="particles-js"></div>
 
+  <!-- Navbar -->
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Foods</a>
+    <a href="#">Log</a>
+    <a href="#">Profile</a>
+  </nav>
+
   <div class="content">
     <header>
       <h1>Search for Your Food and Log Your Intake</h1>
@@ -137,12 +163,8 @@
       </div>
 
       <div class="serving-size" id="serving-size-container" style="display:none;">
-        <label for="serving-size">Select Serving Size:</label>
-        <select id="serving-size">
-          <option value="1">1 serving</option>
-          <option value="0.5">1/2 serving</option>
-          <option value="2">2 servings</option>
-        </select>
+        <label for="serving-size">Enter Custom Serving Size (in grams or cups):</label>
+        <input type="number" id="custom-serving-size" placeholder="Enter serving size" />
       </div>
 
       <div id="nutrition-details" class="nutrition-details">
@@ -150,9 +172,9 @@
       </div>
     </section>
 
-    <section class="pie-chart-container">
-      <h2>Nutrition Breakdown (3D Pie Chart)</h2>
-      <canvas id="pie-chart"></canvas>
+    <section class="chart-container">
+      <h2>Nutrition Breakdown (Bar Graph)</h2>
+      <canvas id="nutrition-chart"></canvas>
     </section>
 
     <!-- Log Table -->
@@ -180,9 +202,9 @@
     const foodList = document.getElementById('food-list');
     const foodDetailsContainer = document.getElementById('food-details');
     const servingSizeContainer = document.getElementById('serving-size-container');
-    const servingSizeSelect = document.getElementById('serving-size');
+    const customServingSizeInput = document.getElementById('custom-serving-size');
     const nutritionDetails = document.getElementById('nutrition-details');
-    const pieChartCanvas = document.getElementById('pie-chart');
+    const nutritionChartCanvas = document.getElementById('nutrition-chart');
     const foodLogTable = document.getElementById('food-log').getElementsByTagName('tbody')[0];
 
     const APP_ID = "b0c02042";  // Your Edamam Application ID
@@ -226,88 +248,82 @@
       `;
 
       servingSizeContainer.style.display = 'block';
-      servingSizeSelect.addEventListener('change', () => updateNutritionDetails(food, servingSize));
+      customServingSizeInput.addEventListener('input', () => updateNutritionDetails(food));
     }
 
-    function updateNutritionDetails(food, servingSize) {
-      const selectedServing = parseFloat(servingSizeSelect.value);
+    function updateNutritionDetails(food) {
+      const customServingSize = parseFloat(customServingSizeInput.value) || 1;
       nutritionData = {
-        calories: food.nutrients.ENERC_KCAL * selectedServing,
-        protein: food.nutrients.PROCNT * selectedServing,
-        carbs: food.nutrients.CHOCDF * selectedServing,
-        fat: food.nutrients.FAT * selectedServing
+        calories: food.nutrients.ENERC_KCAL * customServingSize,
+        protein: food.nutrients.PROCNT * customServingSize,
+        carbs: food.nutrients.CHOCDF * customServingSize,
+        fat: food.nutrients.FAT * customServingSize
       };
 
       nutritionDetails.innerHTML = `
-        <h3>Nutrition Info (for ${selectedServing} serving(s))</h3>
+        <h3>Nutrition Info (for ${customServingSize} serving(s))</h3>
         <p><strong>Calories:</strong> ${nutritionData.calories} kcal</p>
         <p><strong>Protein:</strong> ${nutritionData.protein} g</p>
         <p><strong>Carbs:</strong> ${nutritionData.carbs} g</p>
         <p><strong>Fat:</strong> ${nutritionData.fat} g</p>
       `;
 
-      updatePieChart(food.label, selectedServing);
+      updateBarChart();
+      logFood(food.label, customServingSize);
     }
 
-    function updatePieChart(foodName, selectedServing) {
-      const chartData = {
-        labels: ['Calories', 'Protein', 'Carbs', 'Fat'],
-        datasets: [{
-          data: [nutritionData.calories, nutritionData.protein, nutritionData.carbs, nutritionData.fat],
-          backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A1'],
-          hoverBackgroundColor: ['#FF704D', '#66FF66', '#4D94FF', '#FF66B3']
-        }]
-      };
-
-      const options = {
-        responsive: true,
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: (tooltipItem) => {
-                const value = tooltipItem.raw;
-                return `${tooltipItem.label}: ${value} g`;
-              }
+    function updateBarChart() {
+      const chart = new Chart(nutritionChartCanvas, {
+        type: 'bar',
+        data: {
+          labels: ['Calories', 'Protein', 'Carbs', 'Fat'],
+          datasets: [{
+            label: 'Nutritional Breakdown',
+            data: [nutritionData.calories, nutritionData.protein, nutritionData.carbs, nutritionData.fat],
+            backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A5'],
+            borderColor: '#fff',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            tooltip: {
+              enabled: true
             }
           },
-          legend: {
-            position: 'top',
+          scales: {
+            y: {
+              beginAtZero: true
+            }
           }
-        },
-        animation: {
-          animateRotate: true,
-          animateScale: true
         }
-      };
-
-      new Chart(pieChartCanvas, {
-        type: 'pie',
-        data: chartData,
-        options: options
       });
-
-      logFood(foodName, selectedServing);
     }
 
-    function logFood(foodName, selectedServing) {
-      const currentTime = new Date().toLocaleString();
+    function logFood(foodName, servingSize) {
       const logRow = foodLogTable.insertRow();
+      const date = new Date();
+      const time = date.toLocaleTimeString();
+
       logRow.innerHTML = `
         <td>${foodName}</td>
-        <td>${selectedServing} serving(s)</td>
+        <td>${servingSize}</td>
         <td>${nutritionData.calories} kcal</td>
-        <td>${currentTime}</td>
+        <td>${time}</td>
       `;
     }
 
     searchBtn.addEventListener('click', async () => {
-      const query = foodSearchInput.value.trim();
-      if (query) {
-        const foodData = await fetchFoodData(query);
+      const foodQuery = foodSearchInput.value;
+      if (foodQuery) {
+        const foodData = await fetchFoodData(foodQuery);
         displayFoodList(foodData.hints);
       }
     });
   </script>
-
 </body>
 </html>
