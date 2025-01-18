@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-3d"></script>
 
   <style>
     #particles-js {
@@ -70,6 +69,14 @@
             <label for="calories">Calories Consumed</label>
             <input id="calories" type="number">
           </div>
+          <div>
+            <label for="foodItem">Food Item</label>
+            <input id="foodItem" type="text" placeholder="e.g. banana">
+          </div>
+          <div>
+            <label for="servings">Servings</label>
+            <input id="servings" type="number" step="0.1" min="1" placeholder="e.g. 1">
+          </div>
         </div>
         <button id="submit">Submit</button>
       </section>
@@ -85,6 +92,8 @@
               <th>Water Intake (L)</th>
               <th>Sleep (Hours)</th>
               <th>Calories Consumed</th>
+              <th>Food Item</th>
+              <th>Servings</th>
             </tr>
           </thead>
           <tbody id="logsSection">
@@ -132,7 +141,7 @@
     const apiKey = 'b86ae26b7f844ead91ce96df1eb8df0c';  // Replace with your actual API key
 
     async function fetchFoodData(foodItem) {
-      const url = `https://api.spoonacular.com/food/ingredients/search?query=${foodItem}&number=2&sort=calories&sortDirection=desc&apiKey=${apiKey}`;
+      const url = `https://api.spoonacular.com/food/ingredients/search?query=${foodItem}&number=1&sort=calories&sortDirection=desc&apiKey=${apiKey}`;
 
       try {
         const response = await fetch(url);
@@ -164,9 +173,11 @@
       const water = document.getElementById('water').value;
       const sleep = document.getElementById('sleep').value;
       const calories = document.getElementById('calories').value;
+      const foodItem = document.getElementById('foodItem').value;
+      const servings = document.getElementById('servings').value;
 
-      const foodItem = "banana";  // Example food item, you can replace this with dynamic input
-      foodData = await fetchFoodData(foodItem);
+      const foodData = await fetchFoodData(foodItem);
+      const totalCalories = foodData.calories * servings;
 
       // Log fitness data including calories
       const log = {
@@ -174,8 +185,9 @@
         steps,
         water,
         sleep,
-        calories,
-        foodData
+        calories: totalCalories,
+        foodItem,
+        servings
       };
 
       // Inject log into table
@@ -186,11 +198,13 @@
         <td>${log.steps}</td>
         <td>${log.water}</td>
         <td>${log.sleep}</td>
-        <td>${log.calories} / ${log.foodData.name} - ${log.foodData.calories} calories</td>
+        <td>${log.calories} (from ${log.foodItem} x${log.servings})</td>
+        <td>${log.foodItem}</td>
+        <td>${log.servings}</td>
       `;
 
       // Update charts
-      updateCharts(steps, water, sleep, calories, foodData);
+      updateCharts(steps, water, sleep, totalCalories, foodData);
     });
 
     function updateCharts(steps, water, sleep, calories, foodData) {
@@ -225,17 +239,6 @@
             borderColor: ['#FF5733', '#33FF57', '#3357FF'],
             borderWidth: 1
           }]
-        },
-        options: {
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  return context.label + ': ' + context.raw + 'g';
-                }
-              }
-            }
-          }
         }
       });
     }
