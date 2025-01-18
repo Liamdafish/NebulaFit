@@ -3,95 +3,220 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nutrition Tracker</title>
+  <title>Nutrition | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Particles.js Script -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+  <style>
+    /* Styling for the particles background */
+    #particles-js {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* Content styles */
+    .content {
+      position: relative;
+      z-index: 1;
+      padding-left: 270px; /* Adjusted to leave space for the tabbar */
+      padding-top: 60px;
+    }
+
+    /* Sidebar Styling */
+    .tabbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 250px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1rem 0;
+    }
+
+    img.trophy-icon {
+      width: 30px;
+      height: auto;
+      display: inline-block;
+      margin-bottom: 0;
+    }
+
+    .tabbar a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      padding: 1rem;
+      color: #bbb;
+      transition: color 0.3s, background 0.3s;
+    }
+
+    .tabbar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #81c7f5;
+    }
+
+    .tabbar a.active {
+      background: rgba(81, 199, 245, 0.2);
+      color: #81c7f5;
+    }
+
+    .tabbar .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-bottom: 0.5rem;
+      fill: currentColor;
+    }
+
+    .tabbar span {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    /* Nutrition Form Inputs */
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #fff; /* Set text color to white */
+    }
+
+    table th, table td {
+      padding: 8px 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #333; /* Dark background for header */
+      color: #fff; /* White text color for the header */
+    }
+
+    table tbody tr:nth-child(even) {
+      background-color: #444; /* Slightly lighter color for even rows */
+    }
+
+    table tbody tr:nth-child(odd) {
+      background-color: #333; /* Dark color for odd rows */
+    }
+
+    table th, table td {
+      padding: 10px;
+    }
+
+    table th {
+      text-transform: uppercase;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Nutrition Tracker</h1>
-  </header>
+  <div id="particles-js"></div>
 
-  <section>
-    <input type="text" id="foodSearch" placeholder="Search food...">
-    <button id="searchBtn">Search</button>
-  </section>
+  <nav class="tabbar">
+    <a class="tab-link" href="today.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
+      </svg>
+      <span>Today</span>
+    </a>
 
-  <section id="foodListSection" style="display: none;">
-    <h2>Food List</h2>
-    <ul id="foodList"></ul>
-  </section>
+    <a class="tab-link" href="week.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <span>Week</span>
+    </a>
 
-  <section id="nutritionDetails" style="display: none;">
-    <h2>Nutrition Details</h2>
-    <p id="foodName"></p>
-    <p>Calories: <span id="calories"></span> kcal</p>
-    <p>Protein: <span id="protein"></span> g</p>
-    <p>Fat: <span id="fat"></span> g</p>
-    <p>Carbs: <span id="carbs"></span> g</p>
-    <p>Serving Size: <span id="servingSize"></span></p>
-  </section>
+    <a class="tab-link" href="exercises.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      <span>Exercises</span>
+    </a>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const API_URL = 'https://api.edamam.com/api/food-database/v2/parser';
-      const APP_ID = 'b0c02042';
-      const API_KEY = 'c85342f02e2ce14196c6818dc0ec0d11';
+    <a class="tab-link" href="stats.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2-2 0 012-2h2a2-2 0 012 2v14a2-2 0 01-2 2h-2a-2 2-2 2z"></path>
+      </svg>
+      <span>Stats</span>
+    </a>
 
-      const searchBtn = document.getElementById('searchBtn');
-      const foodSearch = document.getElementById('foodSearch');
-      const foodListSection = document.getElementById('foodListSection');
-      const foodList = document.getElementById('foodList');
-      const nutritionDetails = document.getElementById('nutritionDetails');
-      const foodName = document.getElementById('foodName');
-      const calories = document.getElementById('calories');
-      const protein = document.getElementById('protein');
-      const fat = document.getElementById('fat');
-      const carbs = document.getElementById('carbs');
-      const servingSize = document.getElementById('servingSize');
+    <a class="tab-link" href="achievements.html">
+      <img src="trophy.png" alt="Trophy Icon" class="trophy-icon">
+      <span>Achievements</span>
+    </a>
 
-      searchBtn.addEventListener('click', function () {
-        const query = foodSearch.value.trim();
-        if (query) {
-          fetchFoodData(query);
-        }
-      });
+    <a id="profile-button" class="tab-link" onclick="window.location.href='profile.html';">
+      <img src="profile.png" alt="Profile" class="icon">
+      <span>Profile</span>
+    </a>
+  </nav>
 
-      async function fetchFoodData(query) {
-        const response = await fetch(`${API_URL}?app_id=${APP_ID}&app_key=${API_KEY}&ingr=${query}`);
-        const data = await response.json();
+  <!-- Main Content -->
+  <div class="content">
+    <header>
+      <h1>Log Your Nutrition Intake</h1>
+    </header>
+    <main>
+      <!-- Log Nutrition Data -->
+      <section class="inputs">
+        <input type="date" name="date" id="date" class="input-field">
+        <input type="number" name="calories" id="calories" class="input-field" placeholder="Calories">
+        <input type="number" name="protein" id="protein" class="input-field" placeholder="Protein (g)">
+        <input type="number" name="carbs" id="carbs" class="input-field" placeholder="Carbs (g)">
+        <input type="number" name="fats" id="fats" class="input-field" placeholder="Fats (g)">
+        <button type="submit" class="submit-btn">Log</button>
+      </section>
 
-        if (data.hints) {
-          displayFoodList(data.hints);
-        } else {
-          console.error('Error fetching data:', data);
-          alert('Error fetching food data. Please try again.');
-        }
-      }
-
-      function displayFoodList(foodItems) {
-        foodListSection.style.display = 'block';
-        foodList.innerHTML = '';
-        foodItems.forEach(item => {
-          const foodItem = document.createElement('li');
-          foodItem.innerHTML = `
-            <span>${item.food.label}</span>
-            <button onclick="selectFood(${JSON.stringify(item.food.nutrients)}, '${item.food.label}')">Select</button>
-          `;
-          foodList.appendChild(foodItem);
-        });
-      }
-
-      function selectFood(nutrients, name) {
-        foodName.textContent = name;
-        calories.textContent = nutrients.ENERC_KCAL;
-        protein.textContent = nutrients.PROCNT;
-        fat.textContent = nutrients.FAT;
-        carbs.textContent = nutrients.CHOCDF;
-        servingSize.textContent = '1 serving';
-        nutritionDetails.style.display = 'block';
-      }
-    });
-  </script>
+      <!-- Nutrition Logs Table -->
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Carbs</th>
+            <th>Fats</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-01-18</td>
+            <td>1200</td>
+            <td>50g</td>
+            <td>200g</td>
+            <td>40g</td>
+          </tr>
+          <tr>
+            <td>2025-01-17</td>
+            <td>1350</td>
+            <td>60g</td>
+            <td>150g</td>
+            <td>45g</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
 </body>
 </html>
