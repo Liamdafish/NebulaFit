@@ -7,21 +7,15 @@
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Barcode scanner library -->
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
   <nav class="tabbar">
-    <a class="tab-link" href="today.html">
-      <span>Today</span>
-    </a>
-    <a class="tab-link" href="week.html">
-      <span>Week</span>
-    </a>
-    <a class="tab-link" href="nutrition.html">
-      <span>Nutrition</span>
-    </a>
-    <a class="tab-link" href="exercises.html">
-      <span>Exercises</span>
-    </a>
+    <a class="tab-link" href="today.html">Today</a>
+    <a class="tab-link" href="week.html">Week</a>
+    <a class="tab-link" href="nutrition.html">Nutrition</a>
+    <a class="tab-link" href="exercises.html">Exercises</a>
   </nav>
 
   <div class="content">
@@ -39,6 +33,8 @@
       <section id="foodListSection" style="display: none;">
         <h2>Select Food and Servings</h2>
         <ul id="foodList"></ul>
+        <input type="number" id="foodServings" placeholder="Number of servings" min="1" />
+        <button id="logFoodBtn">Log Food</button>
       </section>
 
       <section id="nutritionDetails" style="display: none;">
@@ -50,11 +46,21 @@
         <p>Carbs: <span id="carbs"></span> g</p>
         <p>Serving Size: <span id="servingSize"></span></p>
       </section>
+
+      <section id="barcodeSection">
+        <h2>Scan a Barcode</h2>
+        <div id="reader" style="width: 300px; height: 300px;"></div>
+        <button id="startScan">Start Scanning</button>
+      </section>
+
+      <section id="foodChartSection">
+        <h2>Logged Foods</h2>
+        <canvas id="foodChart"></canvas>
+      </section>
     </main>
   </div>
 
   <script>
-    // API details with provided credentials
     const API_URL = 'https://api.edamam.com/api/food-database/v2/parser';
     const API_KEY = 'a00e1fa1cfc5ab2e105d054726b5b874'; // Provided API key
     const APP_ID = 'deeb16df'; // Provided application ID
@@ -64,6 +70,8 @@
     const foodSearch = document.getElementById('foodSearch');
     const foodListSection = document.getElementById('foodListSection');
     const foodList = document.getElementById('foodList');
+    const foodServings = document.getElementById('foodServings');
+    const logFoodBtn = document.getElementById('logFoodBtn');
     const nutritionDetails = document.getElementById('nutritionDetails');
     const foodName = document.getElementById('foodName');
     const calories = document.getElementById('calories');
@@ -71,6 +79,12 @@
     const fat = document.getElementById('fat');
     const carbs = document.getElementById('carbs');
     const servingSize = document.getElementById('servingSize');
+    const barcodeSection = document.getElementById('barcodeSection');
+    const readerElement = document.getElementById('reader');
+    const startScanBtn = document.getElementById('startScan');
+    const foodChartSection = document.getElementById('foodChartSection');
+
+    const loggedFoods = [];
 
     // Search food on button click
     searchBtn.addEventListener('click', () => {
@@ -110,7 +124,68 @@
       carbs.textContent = nutrients.CHOCDF;
       servingSize.textContent = '1 serving';
       nutritionDetails.style.display = 'block';
+
+      // Log food to chart
+      logFoodBtn.onclick = () => {
+        const servings = foodServings.value || 1;
+        loggedFoods.push({
+          name: name,
+          calories: nutrients.ENERC_KCAL * servings,
+          protein: nutrients.PROCNT * servings,
+          fat: nutrients.FAT * servings,
+          carbs: nutrients.CHOCDF * servings,
+        });
+        renderChart();
+      };
+    }
+
+    // Render chart with logged foods
+    function renderChart() {
+      const ctx = document.getElementById('foodChart').getContext('2d');
+      const foodData = loggedFoods.map(food => ({
+        label: food.name,
+        data: [food.calories, food.protein, food.fat, food.carbs],
+      }));
+      const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Calories', 'Protein', 'Fat', 'Carbs'],
+          datasets: foodData,
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    // Start barcode scanning
+    startScanBtn.addEventListener('click', () => {
+      const html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start(
+        { facingMode: "environment" }, 
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+          console.log(decodedText);
+          fetchFoodByBarcode(decodedText);
+        },
+        (errorMessage) => { 
+          console.error(errorMessage);
+        }
+      );
+    });
+
+    // Fetch food by barcode
+    async function fetchFoodByBarcode(barcode) {
+      const response = await fetch(`${API_URL}?app_id=${APP_ID}&app_key=${API_KEY}&barcode=${barcode}`);
+      const data = await response.json();
+      displayFoodList(data.hints);
     }
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
