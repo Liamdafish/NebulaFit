@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutrition Tracker | Astronaut Fitness Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <nav class="tabbar">
+    <a class="tab-link" href="today.html">
+      <span>Today</span>
+    </a>
+    <a class="tab-link" href="week.html">
+      <span>Week</span>
+    </a>
+    <a class="tab-link" href="nutrition.html">
+      <span>Nutrition</span>
+    </a>
+    <a class="tab-link" href="exercises.html">
+      <span>Exercises</span>
+    </a>
+  </nav>
+
+  <div class="content">
+    <header>
+      <h1>Nutrition Tracker</h1>
+    </header>
+
+    <main>
+      <section>
+        <h2>Search for Food</h2>
+        <input type="text" id="foodSearch" placeholder="Search food...">
+        <button id="searchBtn">Search</button>
+      </section>
+
+      <section id="foodListSection" style="display: none;">
+        <h2>Select Food and Servings</h2>
+        <ul id="foodList"></ul>
+      </section>
+
+      <section id="nutritionDetails" style="display: none;">
+        <h2>Nutrition Details</h2>
+        <p id="foodName"></p>
+        <p>Calories: <span id="calories"></span> kcal</p>
+        <p>Protein: <span id="protein"></span> g</p>
+        <p>Fat: <span id="fat"></span> g</p>
+        <p>Carbs: <span id="carbs"></span> g</p>
+        <p>Serving Size: <span id="servingSize"></span></p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // API details with provided credentials
+    const API_URL = 'https://api.edamam.com/api/food-database/v2/parser';
+    const API_KEY = 'a00e1fa1cfc5ab2e105d054726b5b874'; // Provided API key
+    const APP_ID = 'deeb16df'; // Provided application ID
+
+    // DOM Elements
+    const searchBtn = document.getElementById('searchBtn');
+    const foodSearch = document.getElementById('foodSearch');
+    const foodListSection = document.getElementById('foodListSection');
+    const foodList = document.getElementById('foodList');
+    const nutritionDetails = document.getElementById('nutritionDetails');
+    const foodName = document.getElementById('foodName');
+    const calories = document.getElementById('calories');
+    const protein = document.getElementById('protein');
+    const fat = document.getElementById('fat');
+    const carbs = document.getElementById('carbs');
+    const servingSize = document.getElementById('servingSize');
+
+    // Search food on button click
+    searchBtn.addEventListener('click', () => {
+      const query = foodSearch.value.trim();
+      if (query) {
+        fetchFoodData(query);
+      }
+    });
+
+    // Fetch food data from API
+    async function fetchFoodData(query) {
+      const response = await fetch(`${API_URL}?app_id=${APP_ID}&app_key=${API_KEY}&ingr=${query}`);
+      const data = await response.json();
+      displayFoodList(data.hints);
+    }
+
+    // Display food list
+    function displayFoodList(foodItems) {
+      foodListSection.style.display = 'block';
+      foodList.innerHTML = '';
+      foodItems.forEach(item => {
+        const foodItem = document.createElement('li');
+        foodItem.innerHTML = `
+          <span>${item.food.label}</span>
+          <button onclick="selectFood(${JSON.stringify(item.food.nutrients)}, '${item.food.label}')">Select</button>
+        `;
+        foodList.appendChild(foodItem);
+      });
+    }
+
+    // Select food and display nutrition details
+    function selectFood(nutrients, name) {
+      foodName.textContent = name;
+      calories.textContent = nutrients.ENERC_KCAL;
+      protein.textContent = nutrients.PROCNT;
+      fat.textContent = nutrients.FAT;
+      carbs.textContent = nutrients.CHOCDF;
+      servingSize.textContent = '1 serving';
+      nutritionDetails.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
