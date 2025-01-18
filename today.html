@@ -176,7 +176,31 @@
     </main>
   </div>
 
-  <script src="js/exercises.js"></script>
+  <script>
+    document.getElementById('submit').addEventListener('click', function() {
+      const steps = document.getElementById('steps').value;
+      const water = document.getElementById('water').value;
+      const sleep = document.getElementById('sleep').value;
+
+      if (steps && water && sleep) {
+        const table = document.getElementById('log-table');
+        const row = table.insertRow();
+        row.innerHTML = `
+          <td>${new Date().toLocaleDateString()}</td>
+          <td>${steps}</td>
+          <td>${water}</td>
+          <td>${sleep}</td>
+        `;
+        
+        // Clear input fields after submitting
+        document.getElementById('steps').value = '';
+        document.getElementById('water').value = '';
+        document.getElementById('sleep').value = '';
+      } else {
+        alert("Please fill in all fields.");
+      }
+    });
+  </script>
 
   <!-- Particles.js Initialization -->
   <script>
