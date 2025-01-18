@@ -173,6 +173,7 @@
               <th>Protein (g)</th>
               <th>Carbs (g)</th>
               <th>Fat (g)</th>
+              <th>Timestamp</th>
               <th>Image</th>
             </tr>
           </thead>
@@ -261,6 +262,7 @@
     function displayNutritionData(food, servingSize) {
       const foodName = food.label;
       const nutrition = food.nutrients;
+      const timestamp = new Date().toLocaleString(); // Timestamp for the log
       const imageUrl = food.image || 'https://via.placeholder.com/80'; // Default image if not available
 
       const row = document.createElement('tr');
@@ -270,6 +272,7 @@
         <td>${(nutrition.PROCNT * servingSize).toFixed(2)}</td>
         <td>${(nutrition.CHOCDF * servingSize).toFixed(2)}</td>
         <td>${(nutrition.FAT * servingSize).toFixed(2)}</td>
+        <td>${timestamp}</td>
         <td><img class="food-image" src="${imageUrl}" alt="${foodName} image" /></td>
       `;
 
@@ -278,7 +281,8 @@
         calories: nutrition.ENERC_KCAL * servingSize,
         protein: nutrition.PROCNT * servingSize,
         carbs: nutrition.CHOCDF * servingSize,
-        fat: nutrition.FAT * servingSize
+        fat: nutrition.FAT * servingSize,
+        timestamp: timestamp
       });
 
       nutritionTableBody.appendChild(row);
