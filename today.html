@@ -92,7 +92,7 @@
               <th>Water Intake (L)</th>
               <th>Sleep (Hours)</th>
               <th>Food</th>
-              <th>Caloric Info</th>
+              <th>Calories</th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -157,10 +157,13 @@
         
         // Display new search results
         data.results.forEach(food => {
+          // Get calories from nutrition info
+          const calories = food.nutrition.nutrients.find(nutrient => nutrient.name === "Calories")?.amount || 'N/A';
+
           const foodItem = document.createElement('li');
           foodItem.innerHTML = `
-            <strong>${food.name}</strong> - Calories: ${food.nutrition.nutrients.find(nutrient => nutrient.name === "Calories").amount}
-            <button onclick="logFood('${food.name}', ${food.id})">Log Food</button>
+            <strong>${food.name}</strong> - Calories: ${calories}
+            <button onclick="logFood('${food.name}', ${food.id}, ${calories})">Log Food</button>
           `;
           searchResults.appendChild(foodItem);
         });
@@ -170,12 +173,7 @@
     }
 
     // Function to log the food with calories into the fitness logs
-    async function logFood(foodName, foodId) {
-      // Fetch detailed food information
-      const response = await fetch(`https://api.spoonacular.com/food/ingredients/${foodId}/information?apiKey=${apiKey}`);
-      const foodData = await response.json();
-
-      const calories = foodData.nutrition.nutrients.find(nutrient => nutrient.name === "Calories").amount;
+    async function logFood(foodName, foodId, calories) {
       const steps = document.getElementById('steps').value;
       const water = document.getElementById('water').value;
       const sleep = document.getElementById('sleep').value;
@@ -188,7 +186,7 @@
         <td>${water}</td>
         <td>${sleep}</td>
         <td>${foodName}</td>
-        <td>Calories: ${calories}</td>
+        <td>${calories} kcal</td>
         <td><button onclick="deleteLog(this)">Delete</button></td>
       `;
       logsSection.appendChild(newRow);
