@@ -73,6 +73,25 @@
       border: none;
     }
 
+    .nutrition-search ul {
+      background-color: white;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+    }
+
+    .nutrition-search li {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .nutrition-search li:hover {
+      background-color: #f0f0f0;
+    }
+
     /* Nutrition Table */
     table {
       width: 100%;
@@ -114,6 +133,13 @@
       max-width: 600px;
       margin: 20px auto;
     }
+
+    /* Image Styling */
+    .food-image {
+      max-width: 80px;
+      max-height: 80px;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
@@ -130,7 +156,9 @@
     <main>
       <!-- Nutrition Search Section -->
       <section class="nutrition-search">
-        <input type="text" id="food-search" placeholder="Search for food" />
+        <input type="text" id="food-search" placeholder="Search for food" oninput="getFoodSuggestions()" />
+        <div id="food-suggestions"></div>
+        <input type="number" id="serving-size" placeholder="Enter serving size" min="1" step="1" />
         <button onclick="searchFood()">Search</button>
       </section>
 
@@ -145,6 +173,7 @@
               <th>Protein (g)</th>
               <th>Carbs (g)</th>
               <th>Fat (g)</th>
+              <th>Image</th>
             </tr>
           </thead>
           <tbody id="nutrition-table-body">
@@ -168,10 +197,45 @@
     const API_KEY = 'c85342f02e2ce14196c6818dc0ec0d11';  // Your Application Key
     const nutritionTableBody = document.getElementById('nutrition-table-body');
     const foodSearchInput = document.getElementById('food-search');
+    const servingSizeInput = document.getElementById('serving-size');
+    const foodSuggestions = document.getElementById('food-suggestions');
     let nutritionData = [];
+    let foodList = []; // To store food suggestions
+
+    function getFoodSuggestions() {
+      const query = foodSearchInput.value.trim();
+      if (!query) {
+        foodSuggestions.innerHTML = '';
+        return;
+      }
+
+      const url = `https://api.edamam.com/api/food-database/v2/parser?app_id=${API_ID}&app_key=${API_KEY}&ingr=${query}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          foodList = data.hints || [];
+          displayFoodSuggestions();
+        });
+    }
+
+    function displayFoodSuggestions() {
+      foodSuggestions.innerHTML = '';
+      foodList.forEach(item => {
+        const suggestion = document.createElement('li');
+        suggestion.textContent = item.food.label;
+        suggestion.onclick = () => {
+          foodSearchInput.value = item.food.label;
+          foodSuggestions.innerHTML = '';
+        };
+        foodSuggestions.appendChild(suggestion);
+      });
+    }
 
     function searchFood() {
       const foodQuery = foodSearchInput.value.trim();
+      const servingSize = parseFloat(servingSizeInput.value) || 1;
+
       if (!foodQuery) {
         alert('Please enter a food item.');
         return;
@@ -183,7 +247,7 @@
         .then(response => response.json())
         .then(data => {
           if (data.hints && data.hints.length > 0) {
-            displayNutritionData(data.hints[0].food);
+            displayNutritionData(data.hints[0].food, servingSize);
           } else {
             alert('No results found for this food.');
           }
@@ -194,29 +258,32 @@
         });
     }
 
-    function displayNutritionData(food) {
+    function displayNutritionData(food, servingSize) {
       const foodName = food.label;
       const nutrition = food.nutrients;
+      const imageUrl = food.image || 'https://via.placeholder.com/80'; // Default image if not available
 
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${foodName}</td>
-        <td>${nutrition.ENERC_KCAL ? nutrition.ENERC_KCAL.toFixed(2) : 0}</td>
-        <td>${nutrition.PROCNT ? nutrition.PROCNT.toFixed(2) : 0}</td>
-        <td>${nutrition.CHOCDF ? nutrition.CHOCDF.toFixed(2) : 0}</td>
-        <td>${nutrition.FAT ? nutrition.FAT.toFixed(2) : 0}</td>
+        <td>${(nutrition.ENERC_KCAL * servingSize).toFixed(2)}</td>
+        <td>${(nutrition.PROCNT * servingSize).toFixed(2)}</td>
+        <td>${(nutrition.CHOCDF * servingSize).toFixed(2)}</td>
+        <td>${(nutrition.FAT * servingSize).toFixed(2)}</td>
+        <td><img class="food-image" src="${imageUrl}" alt="${foodName} image" /></td>
       `;
 
       nutritionData.push({
         food: foodName,
-        calories: nutrition.ENERC_KCAL || 0,
-        protein: nutrition.PROCNT || 0,
-        carbs: nutrition.CHOCDF || 0,
-        fat: nutrition.FAT || 0
+        calories: nutrition.ENERC_KCAL * servingSize,
+        protein: nutrition.PROCNT * servingSize,
+        carbs: nutrition.CHOCDF * servingSize,
+        fat: nutrition.FAT * servingSize
       });
 
       nutritionTableBody.appendChild(row);
       updateNutritionChart();
+      saveDataToCookies();
     }
 
     function updateNutritionChart() {
@@ -250,7 +317,7 @@
       };
 
       const ctx = document.getElementById('nutrition-chart').getContext('2d');
-      const nutritionChart = new Chart(ctx, {
+      new Chart(ctx, {
         type: 'bar',
         data: chartData,
         options: {
@@ -261,6 +328,24 @@
         }
       });
     }
+
+    function saveDataToCookies() {
+      const nutritionDataStr = JSON.stringify(nutritionData);
+      document.cookie = `nutritionData=${nutritionDataStr}; path=/; expires=${new Date(new Date().getTime() + 365*24*60*60*1000).toUTCString()}`;
+    }
+
+    function loadDataFromCookies() {
+      const cookies = document.cookie.split('; ');
+      const nutritionCookie = cookies.find(row => row.startsWith('nutritionData='));
+      if (nutritionCookie) {
+        const nutritionDataStr = nutritionCookie.split('=')[1];
+        nutritionData = JSON.parse(nutritionDataStr);
+        nutritionData.forEach(displayNutritionData);
+      }
+    }
+
+    // Load saved data when the page is loaded
+    window.onload = loadDataFromCookies;
   </script>
 
 </body>
