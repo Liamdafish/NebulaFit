@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nutrition Tracker | Astronaut Fitness Tracker</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></script>
 </head>
 <body>
   <nav class="tabbar">
@@ -47,7 +46,7 @@
 
       <section id="foodChartSection">
         <h2>Logged Foods</h2>
-        <canvas id="foodChart"></canvas>
+        <canvas id="foodChart" width="400" height="200"></canvas>
       </section>
     </main>
   </div>
@@ -60,7 +59,6 @@
     // DOM Elements
     const searchBtn = document.getElementById('searchBtn');
     const foodSearch = document.getElementById('foodSearch');
-
     const foodListSection = document.getElementById('foodListSection');
     const foodList = document.getElementById('foodList');
     const foodServings = document.getElementById('foodServings');
@@ -94,7 +92,7 @@
     // Display food list
     function displayFoodList(foodItems) {
       foodListSection.style.display = 'block';
-      foodList.innerHTML = '';
+      foodList.innerHTML = ''; // Clear previous list
       foodItems.forEach(item => {
         const foodItem = document.createElement('li');
         foodItem.innerHTML = `
@@ -115,7 +113,7 @@
       servingSize.textContent = '1 serving';
       nutritionDetails.style.display = 'block';
 
-      // Log food to chart
+      // Log food to chart when button is clicked
       logFoodBtn.onclick = () => {
         const servings = foodServings.value || 1;
         loggedFoods.push({
@@ -145,14 +143,12 @@
         options: {
           scales: {
             y: {
-              beginAtZero: true
-            }
-          }
-        }
+              beginAtZero: true,
+            },
+          },
+        },
       });
     }
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
