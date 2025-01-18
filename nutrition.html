@@ -8,7 +8,8 @@
   <script src="script.js" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     /* Styling for the particles background */
     #particles-js {
@@ -24,7 +25,7 @@
     .content {
       position: relative;
       z-index: 1;
-      padding-left: 270px; /* Adjusted to leave space for the tabbar */
+      padding-left: 270px;
       padding-top: 60px;
     }
 
@@ -43,13 +44,6 @@
       padding: 1rem 0;
     }
 
-    img.trophy-icon {
-      width: 30px;
-      height: auto;
-      display: inline-block;
-      margin-bottom: 0;
-    }
-
     .tabbar a {
       display: flex;
       flex-direction: column;
@@ -66,23 +60,6 @@
       color: #81c7f5;
     }
 
-    .tabbar a.active {
-      background: rgba(81, 199, 245, 0.2);
-      color: #81c7f5;
-    }
-
-    .tabbar .icon {
-      width: 1.5rem;
-      height: 1.5rem;
-      margin-bottom: 0.5rem;
-      fill: currentColor;
-    }
-
-    .tabbar span {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-    }
-
     /* Nutrition search and options */
     .nutrition-search {
       margin: 1rem;
@@ -96,34 +73,12 @@
       border: none;
     }
 
-    .nutrition-options {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .nutrition-option {
-      background-color: #333;
-      padding: 20px;
-      border-radius: 8px;
-      color: white;
-      width: 200px;
-      text-align: center;
-      transition: transform 0.3s ease-in-out;
-    }
-
-    .nutrition-option.small {
-      width: 150px; /* Reduced width for smaller options */
-      font-size: 0.8rem;
-    }
-
-    /* Table styling */
+    /* Nutrition Table */
     table {
       width: 100%;
       border-collapse: collapse;
-      color: #fff; 
+      margin-top: 20px;
+      color: #fff;
     }
 
     table th, table td {
@@ -134,15 +89,15 @@
 
     table th {
       background-color: #333;
-      color: #fff; 
+      color: #fff;
     }
 
     table tbody tr:nth-child(even) {
-      background-color: #444; 
+      background-color: #444;
     }
 
     table tbody tr:nth-child(odd) {
-      background-color: #333; 
+      background-color: #333;
     }
 
     table th, table td {
@@ -152,93 +107,161 @@
     table th {
       text-transform: uppercase;
     }
+
+    /* Chart container */
+    .chart-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+    }
   </style>
 </head>
 <body>
   <div id="particles-js"></div>
 
   <nav class="tabbar">
-    <a class="tab-link" href="today.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
-      </svg>
-      <span>Today</span>
-    </a>
-    
-    <a class="tab-link active" href="nutrition.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-      </svg>
-      <span>Nutrition</span>
-    </a>
-    
-    <a class="tab-link" href="week.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-      </svg>
-      <span>Week</span>
-    </a>
-    
-    <a class="tab-link" href="exercises.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-      </svg>
-      <span>Exercises</span>
-    </a>
-    
-    <a class="tab-link" href="stats.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 00-2-2H9m6 0V9"></path>
-      </svg>
-      <span>Stats</span>
-    </a>
+    <!-- Your existing navbar here -->
   </nav>
 
   <div class="content">
-    <h1>Nutrition Tracker</h1>
-    <div class="nutrition-search">
-      <input id="search" type="text" placeholder="Search for foods...">
-    </div>
-    <div class="nutrition-options" id="nutrition-options">
-      <!-- Options will be displayed here -->
-    </div>
+    <header>
+      <h1>Nutrition Log</h1>
+    </header>
+    <main>
+      <!-- Nutrition Search Section -->
+      <section class="nutrition-search">
+        <input type="text" id="food-search" placeholder="Search for food" />
+        <button onclick="searchFood()">Search</button>
+      </section>
+
+      <!-- Nutrition Data Table -->
+      <section>
+        <h2>Nutrition for the Day</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Food</th>
+              <th>Calories</th>
+              <th>Protein (g)</th>
+              <th>Carbs (g)</th>
+              <th>Fat (g)</th>
+            </tr>
+          </thead>
+          <tbody id="nutrition-table-body">
+            <!-- Nutrition log will appear here -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Nutrition Chart Section -->
+      <section>
+        <h2>Nutrition Breakdown</h2>
+        <div class="chart-container">
+          <canvas id="nutrition-chart"></canvas>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script>
-    const searchInput = document.getElementById('search');
-    const nutritionOptions = document.getElementById('nutrition-options');
+    const API_ID = 'b0c02042';  // Your Application ID
+    const API_KEY = 'c85342f02e2ce14196c6818dc0ec0d11';  // Your Application Key
+    const nutritionTableBody = document.getElementById('nutrition-table-body');
+    const foodSearchInput = document.getElementById('food-search');
+    let nutritionData = [];
 
-    // Sample data
-    const foods = [
-      { name: 'Apple', calories: 95 },
-      { name: 'Banana', calories: 105 },
-      { name: 'Orange', calories: 62 },
-      { name: 'Carrot', calories: 25 },
-      { name: 'Spinach', calories: 23 }
-    ];
+    function searchFood() {
+      const foodQuery = foodSearchInput.value.trim();
+      if (!foodQuery) {
+        alert('Please enter a food item.');
+        return;
+      }
 
-    searchInput.addEventListener('input', () => {
-      const query = searchInput.value.toLowerCase();
-      const filteredFoods = foods.filter(food => food.name.toLowerCase().includes(query));
+      const url = `https://api.edamam.com/api/food-database/v2/parser?app_id=${API_ID}&app_key=${API_KEY}&ingr=${foodQuery}`;
 
-      // Clear previous options
-      nutritionOptions.innerHTML = '';
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.hints && data.hints.length > 0) {
+            displayNutritionData(data.hints[0].food);
+          } else {
+            alert('No results found for this food.');
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          alert('Error fetching nutrition data.');
+        });
+    }
 
-      // Display filtered foods
-      filteredFoods.forEach(food => {
-        const foodElement = document.createElement('div');
-        foodElement.classList.add('nutrition-option');
-        foodElement.innerHTML = `<h3>${food.name}</h3><p>${food.calories} kcal</p>`;
+    function displayNutritionData(food) {
+      const foodName = food.label;
+      const nutrition = food.nutrients;
 
-        // Shrink the option if there's search input
-        if (query) {
-          foodElement.classList.add('small');
-        }
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${foodName}</td>
+        <td>${nutrition.ENERC_KCAL ? nutrition.ENERC_KCAL.toFixed(2) : 0}</td>
+        <td>${nutrition.PROCNT ? nutrition.PROCNT.toFixed(2) : 0}</td>
+        <td>${nutrition.CHOCDF ? nutrition.CHOCDF.toFixed(2) : 0}</td>
+        <td>${nutrition.FAT ? nutrition.FAT.toFixed(2) : 0}</td>
+      `;
 
-        nutritionOptions.appendChild(foodElement);
+      nutritionData.push({
+        food: foodName,
+        calories: nutrition.ENERC_KCAL || 0,
+        protein: nutrition.PROCNT || 0,
+        carbs: nutrition.CHOCDF || 0,
+        fat: nutrition.FAT || 0
       });
-    });
+
+      nutritionTableBody.appendChild(row);
+      updateNutritionChart();
+    }
+
+    function updateNutritionChart() {
+      const chartData = {
+        labels: nutritionData.map(item => item.food),
+        datasets: [{
+          label: 'Calories',
+          data: nutritionData.map(item => item.calories),
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }, {
+          label: 'Protein',
+          data: nutritionData.map(item => item.protein),
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }, {
+          label: 'Carbs',
+          data: nutritionData.map(item => item.carbs),
+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+          borderColor: 'rgba(255, 159, 64, 1)',
+          borderWidth: 1
+        }, {
+          label: 'Fat',
+          data: nutritionData.map(item => item.fat),
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      const ctx = document.getElementById('nutrition-chart').getContext('2d');
+      const nutritionChart = new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+        options: {
+          scales: {
+            x: { beginAtZero: true },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
   </script>
+
 </body>
 </html>
