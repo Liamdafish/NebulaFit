@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Signup | Astronaut Fitness Tracker</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #1b2735, #090a0f);
+      color: #f5f5f5;
+    }
+
+    .wrapper {
+      max-width: 400px;
+      width: 100%;
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .slide-controls {
+      position: relative;
+      display: flex;
+      height: 50px;
+      width: 100%;
+      margin: 20px 0;
+      justify-content: space-between;
+      border: 1px solid #555;
+      border-radius: 10px;
+    }
+
+    .slide-controls .slide {
+      height: 100%;
+      width: 100%;
+      font-size: 1rem;
+      text-align: center;
+      line-height: 48px;
+      cursor: pointer;
+      z-index: 1;
+      transition: all 0.6s ease;
+    }
+
+    .slide-controls label.signup {
+      color: #999;
+    }
+
+    .slide-controls .slider-tab {
+      position: absolute;
+      height: 100%;
+      width: 50%;
+      left: 0;
+      z-index: 0;
+      border-radius: 10px;
+      background-image: linear-gradient(to right, #ec4899, #8b5cf6);
+      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    #signup:checked ~ .slider-tab {
+      left: 50%;
+    }
+
+    #signup:checked ~ label.signup {
+      color: white;
+    }
+
+    #login:checked ~ label.signup {
+      color: #999;
+    }
+
+    #login:checked ~ label.login {
+      color: white;
+    }
+
+    .form-container {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .form-inner {
+      display: flex;
+      width: 200%;
+    }
+
+    .form-inner form {
+      width: 50%;
+      transition: all 0.6s ease;
+    }
+
+    .field {
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px;
+      background: #262626;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .field input:focus {
+      outline: 2px solid #ec4899;
+    }
+
+    .field input::placeholder {
+      color: #9ca3af;
+    }
+
+    .pass-link {
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .pass-link a,
+    .signup-link a {
+      color: #81c7f5;
+      text-decoration: none;
+    }
+
+    .pass-link a:hover,
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+
+    .btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-image: linear-gradient(to right, #ec4899, #8b5cf6);
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="slide-controls">
+    <input type="radio" name="slide" id="login" checked>
+    <input type="radio" name="slide" id="signup">
+    <label for="login" class="slide login">Login</label>
+    <label for="signup" class="slide signup">Signup</label>
+    <div class="slider-tab"></div>
+  </div>
+  <div class="form-container">
+    <div class="form-inner">
+      <form action="#" class="login">
+        <div class="field">
+          <input type="text" id="login-email" placeholder="Email Address" required>
+        </div>
+        <div class="field">
+          <input type="password" id="login-password" placeholder="Password" required>
+        </div>
+        <div class="pass-link"><a href="forgot_password.html">Forgot password?</a></div>
+        <button type="submit" class="btn">Login</button>
+      </form>
+      <form action="#" class="signup">
+        <div class="field">
+          <input type="text" id="signup-email" placeholder="Email Address" required>
+        </div>
+        <div class="field">
+          <input type="password" id="signup-password" placeholder="Password" required>
+        </div>
+        <div class="field">
+          <input type="password" id="signup-confirm-password" placeholder="Confirm password" required>
+        </div>
+        <button type="submit" class="btn">Signup</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const loginForm = document.querySelector("form.login");
+  const signupForm = document.querySelector("form.signup");
+  const signupBtn = document.querySelector("label.signup");
+  const loginBtn = document.querySelector("label.login");
+
+  signupBtn.onclick = () => {
+    loginForm.style.marginLeft = "-50%";
+  };
+
+  loginBtn.onclick = () => {
+    loginForm.style.marginLeft = "0%";
+  };
+
+  signupForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("signup-email").value;
+    const password = document.getElementById("signup-password").value;
+    const confirmPassword = document.getElementById("signup-confirm-password").value;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    if (users.some((user) => user.email === email)) {
+      alert("User already exists. Please login.");
+      return;
+    }
+
+    // Add user to localStorage and set first-time flag
+    users.push({ email, password: btoa(password), firstTime: true });
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("Signup successful! Please login.");
+    loginBtn.click();
+  });
+
+  loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find((user) => user.email === email);
+
+    if (user && atob(user.password) === password) {
+      sessionStorage.setItem("currentUser", email);
+
+      // Redirect based on whether the user is logging in for the first time
+      if (user.firstTime) {
+        // Update the user's first-time flag
+        user.firstTime = false;
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Login successful! Please complete your BMI information.");
+        window.location.href = "bmi.html";
+      } else {
+        alert("Login successful!");
+        window.location.href = "index.html";
+      }
+    } else {
+      alert("Invalid credentials.");
+    }
+  });
+</script>
+
+</body>
+</html>
