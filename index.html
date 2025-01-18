@@ -6,160 +6,153 @@
   <title>Today | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
-  <!-- Font Awesome CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Particles.js CDN -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+  <style>
+    #particles-js {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
 </head>
 <body>
-  <!-- Particles Background Container -->
-  <div id="particles-js" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+  <div id="particles-js"></div>
 
   <nav class="tabbar">
-    <a class="tab-link" href="today.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
-      </svg>
-      <span>Today</span>
-    </a>
-    <a class="tab-link" href="week.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-      </svg>
-      <span>Week</span>
-    </a>
-    <a class="tab-link" href="exercises.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-      </svg>
-      <span>Exercises</span>
-    </a>
-    <a class="tab-link" href="stats.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2-2 0 01-2-2z"></path>
-      </svg>
-      <span>Stats</span>
-    </a>
-    <a class="tab-link" href="achievements.html">
-      <img src="trophy.png" alt="Trophy Icon" class="trophy-icon">
-      <span>Achievements</span>
-    </a>
-    <a class="tab-link" href="settings.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path fill-rule="evenodd" fill="currentColor" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-      </svg>
-      <span>Settings</span>
-    </a>
+    <!-- Add navigation links here -->
   </nav>
 
   <div class="content">
     <header>
-      <h1>Welcome to Astronaut Fitness Tracker</h1>
+      <h1>Today</h1>
     </header>
     <main>
-      <p>
-        Welcome to the Astronaut Fitness Tracker, your ultimate companion for staying fit and
-        tracking your progress. Select an option from the sidebar to get started!
-      </p>
+      <!-- Log Fitness Data -->
       <section>
-        <h2>Features</h2>
-        <ul>
-          <li>Log your daily fitness data</li>
-          <li>Track your weekly progress</li>
-          <li>Explore custom exercise routines</li>
-          <li>Analyze detailed statistics</li>
-          <li>Manage your profile and settings</li>
-        </ul>
+        <h2>Log Food Data</h2>
+        <div class="inputs">
+          <div>
+            <label for="foodSearch">Search for Food</label>
+            <input id="foodSearch" type="text" placeholder="Search for food...">
+          </div>
+          <button id="searchFood" onclick="searchFood()">Search</button>
+        </div>
+
+        <div id="foodResults"></div>
+
+        <button id="submitFood">Submit Food</button>
+      </section>
+
+      <!-- Fitness Logs Table -->
+      <section>
+        <h2>Fitness Logs</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Food</th>
+              <th>Calories</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="logsSection"></tbody>
+        </table>
       </section>
     </main>
   </div>
 
-  <!-- Initialize Particles.js -->
   <script>
     particlesJS('particles-js', {
       "particles": {
-        "number": {
-          "value": 100,
-          "density": {
-            "enable": true,
-            "value_area": 800
-          }
-        },
-        "color": {
-          "value": "#ffffff"
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          },
-          "polygon": {
-            "nb_sides": 5
-          }
-        },
-        "opacity": {
-          "value": 0.5,
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 1,
-            "opacity_min": 0.1,
-            "sync": false
-          }
-        },
-        "size": {
-          "value": 5,
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 40,
-            "size_min": 0.1,
-            "sync": false
-          }
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#ffffff",
-          "opacity": 0.4,
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 6,
-          "direction": "none",
-          "random": true,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false,
-          "attract": {
-            "enable": false,
-            "rotateX": 600,
-            "rotateY": 1200
-          }
-        }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "repulse"
-          },
-          "onclick": {
-            "enable": true,
-            "mode": "push"
-          },
-          "resize": true
-        }
-      },
-      "retina_detect": true
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 }},
+        "color": { "value": "#ffffff" },
+        "shape": { "type": "circle", "stroke": { "width": 0 }},
+        "size": { "value": 3, "random": true },
+        "move": { "enable": true, "speed": 2, "direction": "none", "random": true, "out_mode": "out" }
+      }
     });
-  </script>
 
+    // Get the client ID and client secret from your FatSecret API credentials
+    const clientId = 'YOUR_CLIENT_ID';
+    const clientSecret = '5f42c2ac6ac8431db8b6511eac435aa3';
+
+    // Function to get an access token (OAuth 2.0 Authentication)
+    async function getAccessToken() {
+      const response = await fetch('https://api.fatsecret.com/rest/server.api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          'grant_type': 'client_credentials',
+          'client_id': clientId,
+          'client_secret': clientSecret
+        })
+      });
+      const data = await response.json();
+      return data.access_token;
+    }
+
+    // Function to search food
+    async function searchFood() {
+      const searchQuery = document.getElementById('foodSearch').value;
+      if (!searchQuery) {
+        alert('Please enter a food item to search for.');
+        return;
+      }
+
+      const accessToken = await getAccessToken();
+      const response = await fetch(`https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=${searchQuery}&access_token=${accessToken}`);
+      const data = await response.json();
+
+      const foodResults = data.foods.food.map(food => {
+        return `
+          <div class="food-item">
+            <h3>${food.food_name}</h3>
+            <p>Calories: ${food.nutritional_contents ? food.nutritional_contents.calories : 'N/A'} kcal</p>
+            <button onclick="addFoodToLog('${food.food_name}', ${food.nutritional_contents ? food.nutritional_contents.calories : 0})">Add to Log</button>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('foodResults').innerHTML = foodResults;
+    }
+
+    // Function to add food to the log
+    function addFoodToLog(foodName, calories) {
+      const logRow = document.createElement('tr');
+      logRow.innerHTML = `
+        <td>${new Date().toLocaleDateString()}</td>
+        <td>${foodName}</td>
+        <td>${calories}</td>
+        <td><button onclick="editRow(this)">Edit</button></td>
+        <td><button onclick="deleteRow(this)">Delete</button></td>
+      `;
+      document.getElementById('logsSection').appendChild(logRow);
+    }
+
+    // Function to delete a row
+    function deleteRow(button) {
+      const row = button.closest('tr');
+      row.remove();
+    }
+
+    // Function to edit a row (expandable based on your use case)
+    function editRow(button) {
+      alert('Edit functionality to be implemented');
+    }
+  </script>
 </body>
 </html>
