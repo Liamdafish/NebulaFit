@@ -12,7 +12,15 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
-    /* Add your custom styles here */
+    /* Basic Styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
     #particles-js {
       position: absolute;
       top: 0;
@@ -23,33 +31,53 @@
     }
 
     .content {
-      position: relative;
+      padding: 20px;
       z-index: 1;
-      padding-left: 270px;
-      padding-top: 60px;
     }
 
-    /* Nutrition Form Inputs */
-    .inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
+    .input-container {
+      margin-bottom: 20px;
     }
 
-    .table-container {
-      margin-top: 2rem;
+    .food-list {
+      margin-top: 20px;
+      list-style: none;
+      padding: 0;
     }
 
-    /* Table Styling */
+    .food-list li {
+      cursor: pointer;
+      padding: 10px;
+      background-color: #333;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .food-list li:hover {
+      background-color: #555;
+    }
+
+    .food-info {
+      margin-top: 20px;
+    }
+
+    .serving-size {
+      margin-top: 10px;
+    }
+
+    .nutrition-details {
+      margin-top: 20px;
+    }
+
+    /* Table Styling for Nutritional Info */
     table {
       width: 100%;
       border-collapse: collapse;
-      color: #fff;
     }
 
     table th, table td {
-      padding: 8px 12px;
+      padding: 10px;
       text-align: center;
       border: 1px solid #ddd;
     }
@@ -66,126 +94,128 @@
     table tbody tr:nth-child(odd) {
       background-color: #333;
     }
-
-    table th, table td {
-      padding: 10px;
-    }
-
-    table th {
-      text-transform: uppercase;
-    }
   </style>
 </head>
 <body>
-  <div id="particles-js"></div>
 
-  <nav class="tabbar">
-    <!-- Sidebar links here... -->
-  </nav>
+  <div id="particles-js"></div>
 
   <div class="content">
     <header>
-      <h1>Find Your Food and Log Nutrition</h1>
+      <h1>Search for Your Food and Log Your Intake</h1>
     </header>
 
-    <main>
-      <section>
-        <h2>Search for Food</h2>
-        <div class="inputs">
-          <div>
-            <label for="foodSearch">Food Item</label>
-            <input id="foodSearch" type="text" placeholder="Search for food..." />
-          </div>
-          <button id="searchButton">Search</button>
-        </div>
-      </section>
+    <section class="input-container">
+      <label for="food-search">Search for a food item:</label>
+      <input type="text" id="food-search" placeholder="Enter food name" />
+      <button id="search-btn">Search</button>
+    </section>
 
-      <section class="table-container">
-        <h2>Nutrition Information</h2>
-        <table id="food-table">
-          <thead>
-            <tr>
-              <th>Food</th>
-              <th>Calories</th>
-              <th>Carbs (g)</th>
-              <th>Protein (g)</th>
-              <th>Fat (g)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Results will go here -->
-          </tbody>
-        </table>
-      </section>
-    </main>
+    <section>
+      <h2>Food Results</h2>
+      <ul id="food-list" class="food-list">
+        <!-- Food items will appear here -->
+      </ul>
+    </section>
+
+    <section class="food-info">
+      <h2>Food Details</h2>
+      <div id="food-details">
+        <!-- Food details will be shown here after selection -->
+      </div>
+
+      <div class="serving-size" id="serving-size-container" style="display:none;">
+        <label for="serving-size">Select Serving Size:</label>
+        <select id="serving-size">
+          <option value="1">1 serving</option>
+          <option value="0.5">1/2 serving</option>
+          <option value="2">2 servings</option>
+        </select>
+      </div>
+
+      <div id="nutrition-details" class="nutrition-details">
+        <!-- Nutritional info for selected food -->
+      </div>
+    </section>
+
   </div>
 
   <script>
-    const foodSearchInput = document.getElementById("foodSearch");
-    const searchButton = document.getElementById("searchButton");
-    const foodTable = document.getElementById("food-table").getElementsByTagName('tbody')[0];
+    const foodSearchInput = document.getElementById('food-search');
+    const searchBtn = document.getElementById('search-btn');
+    const foodList = document.getElementById('food-list');
+    const foodDetailsContainer = document.getElementById('food-details');
+    const servingSizeContainer = document.getElementById('serving-size-container');
+    const servingSizeSelect = document.getElementById('serving-size');
+    const nutritionDetails = document.getElementById('nutrition-details');
 
-    // Edamam API credentials
-    const applicationID = "b0c02042";
-    const applicationKey = "c85342f02e2ce14196c6818dc0ec0d11";
+    const APP_ID = "b0c02042";  // Your Edamam Application ID
+    const APP_KEY = "c85342f02e2ce14196c6818dc0ec0d11";  // Your Edamam Application Key
 
-    const apiUrl = "https://api.edamam.com/api/food-database/v2/parser";
-
-    // Function to fetch food data from Edamam API
     async function fetchFoodData(query) {
-      const response = await fetch(`${apiUrl}?app_id=${applicationID}&app_key=${applicationKey}&ingr=${encodeURIComponent(query)}`);
+      const url = `https://api.edamam.com/api/food-database/v2/parser?app_id=${APP_ID}&app_key=${APP_KEY}&ingr=${encodeURIComponent(query)}`;
+      const response = await fetch(url);
       const data = await response.json();
       return data;
     }
 
-    // Function to render food data in the table
-    function renderFoodData(foodData) {
-      const tbody = foodTable;
-      tbody.innerHTML = ""; // Clear previous results
-
-      if (!foodData || !foodData.hints) {
-        alert("No results found.");
-        return;
-      }
-
-      foodData.hints.forEach(item => {
-        const food = item.food;
-        const nutrients = food.nutrients;
-
-        const row = tbody.insertRow();
-        row.innerHTML = `
-          <td>${food.label}</td>
-          <td>${nutrients.ENERC_KCAL || "N/A"} kcal</td>
-          <td>${nutrients.CHOCDF || "N/A"} g</td>
-          <td>${nutrients.PROCNT || "N/A"} g</td>
-          <td>${nutrients.FAT || "N/A"} g</td>
-        `;
+    function displayFoodList(foodItems) {
+      foodList.innerHTML = "";
+      foodItems.forEach((food, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = food.food.label;
+        listItem.onclick = () => displayFoodDetails(food.food, index);
+        foodList.appendChild(listItem);
       });
     }
 
-    // Handle the search button click
-    searchButton.addEventListener("click", async () => {
-      const query = foodSearchInput.value.trim();
-      if (!query) {
-        alert("Please enter a food item.");
-        return;
-      }
+    function displayFoodDetails(food, index) {
+      const servings = food.servings || [];
+      const servingSize = servings.length > 0 ? servings[0].quantity : 1;
 
-      try {
-        const foodData = await fetchFoodData(query);
-        renderFoodData(foodData);
-      } catch (error) {
-        alert("Error fetching data from Edamam API.");
-        console.error(error);
+      foodDetailsContainer.innerHTML = `
+        <h3>${food.label}</h3>
+        <img src="${food.image ? food.image : 'https://via.placeholder.com/150'}" alt="${food.label}" />
+        <p><strong>Calories:</strong> ${food.nutrients.ENERC_KCAL * servingSize} kcal</p>
+        <p><strong>Protein:</strong> ${food.nutrients.PROCNT * servingSize} g</p>
+        <p><strong>Carbs:</strong> ${food.nutrients.CHOCDF * servingSize} g</p>
+        <p><strong>Fat:</strong> ${food.nutrients.FAT * servingSize} g</p>
+      `;
+
+      servingSizeContainer.style.display = 'block';
+      servingSizeSelect.addEventListener('change', () => updateNutritionDetails(food, servingSize));
+    }
+
+    function updateNutritionDetails(food, servingSize) {
+      const selectedServing = parseFloat(servingSizeSelect.value);
+      nutritionDetails.innerHTML = `
+        <h3>Nutrition Info (for ${selectedServing} serving(s))</h3>
+        <p><strong>Calories:</strong> ${food.nutrients.ENERC_KCAL * selectedServing} kcal</p>
+        <p><strong>Protein:</strong> ${food.nutrients.PROCNT * selectedServing} g</p>
+        <p><strong>Carbs:</strong> ${food.nutrients.CHOCDF * selectedServing} g</p>
+        <p><strong>Fat:</strong> ${food.nutrients.FAT * selectedServing} g</p>
+      `;
+    }
+
+    searchBtn.addEventListener('click', async () => {
+      const query = foodSearchInput.value.trim();
+      if (!query) return;
+      const data = await fetchFoodData(query);
+      if (data.hints && data.hints.length > 0) {
+        displayFoodList(data.hints);
+      } else {
+        alert('No food found!');
       }
     });
   </script>
 
-  <!-- Particles.js Initialization -->
   <script>
     particlesJS('particles-js', {
       "particles": {
-        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+        "number": {
+          "value": 80,
+          "density": { "enable": true, "value_area": 800 }
+        },
         "color": { "value": "#ffffff" },
         "shape": {
           "type": "circle",
@@ -216,11 +246,13 @@
         "detect_on": "canvas",
         "events": {
           "onhover": { "enable": true, "mode": "repulse" },
-          "onclick": { "enable": true, "mode": "push" }
+          "onclick": { "enable": true, "mode": "push" },
+          "resize": true
         }
       },
       "retina_detect": true
     });
   </script>
+
 </body>
 </html>
