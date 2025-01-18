@@ -34,182 +34,130 @@
     }
 
     /* Sidebar Styling */
-.tabbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 250px; /* Fixed width for the navbar */
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(12px);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  padding: 1rem 0;
-}
+    .tabbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 250px; /* Fixed width for the navbar */
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1rem 0;
+    }
 
-img.trophy-icon {
-  width: 30px;
-  height: auto;
-  display: inline-block;
-  margin-bottom: 0;
-}
+    img.trophy-icon {
+      width: 30px;
+      height: auto;
+      display: inline-block;
+      margin-bottom: 0;
+    }
 
-.tabbar a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  padding: 1rem;
-  color: #bbb;
-  transition: color 0.3s, background 0.3s;
-}
+    .tabbar a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      padding: 1rem;
+      color: #bbb;
+      transition: color 0.3s, background 0.3s;
+    }
 
-.tabbar a:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #81c7f5;
-}
+    .tabbar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #81c7f5;
+    }
 
-.tabbar a.active {
-  background: rgba(81, 199, 245, 0.2);
-  color: #81c7f5;
-}
+    .tabbar a.active {
+      background: rgba(81, 199, 245, 0.2);
+      color: #81c7f5;
+    }
 
-.tabbar .icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-bottom: 0.5rem;
-  fill: currentColor;
-}
+    .tabbar .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-bottom: 0.5rem;
+      fill: currentColor;
+    }
 
-.tabbar span {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-}
+    .tabbar span {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 <body>
   <div id="particles-js"></div>
 
   <nav class="tabbar">
-  <a class="tab-link" href="today.html">
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
-    </svg>
-    <span>Today</span>
-  </a>
-  
-  <a class="tab-link" href="week.html">
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-    </svg>
-    <span>Week</span>
-  </a>
-  
-  <a class="tab-link" href="exercises.html">
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2-2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-    </svg>
-    <span>Exercises</span>
-  </a>
-  
-  <a class="tab-link" href="stats.html">
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2-2 0 012-2h2a2-2 0 012 2v14a2-2 0 01-2 2h-2a-2 2-2 2z"></path>
-    </svg>
-    <span>Stats</span>
-  </a>
-  
-  <a class="tab-link" href="achievements.html">
-    <img src="trophy.png" alt="Trophy Icon" class="trophy-icon">
-    <span>Achievements</span>
-  </a>
-  
-  <a class="tab-link" href="settings.html">
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path fill-rule="evenodd" fill="currentColor" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-    </svg>
-    <span>Settings</span>
-  </a>
-  
-  <a id="profile-button" class="tab-link" onclick="window.location.href='profile.html';">
-  <img src="profile.png" alt="Profile" class="icon">
-  <span>Profile</span>
-</a>
-
-
+    <a class="tab-link" href="today.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
+      </svg>
+      <span>Today</span>
+    </a>
+    
+    <a class="tab-link" href="week.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <span>Week</span>
+    </a>
+    
+    <a class="tab-link" href="exercises.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2-2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      <span>Exercises</span>
+    </a>
+    
+    <a class="tab-link" href="stats.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2-2 0 012-2h2a2-2 0 012 2v14a2-2 0 01-2 2h-2a-2 2-2 2z"></path>
+      </svg>
+      <span>Stats</span>
+    </a>
+    
+    <a class="tab-link" href="achievements.html">
+      <img src="trophy.png" alt="Trophy Icon" class="trophy-icon">
+      <span>Achievements</span>
+    </a>
+    
+    <a class="tab-link" href="settings.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path fill-rule="evenodd" fill="currentColor" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+      </svg>
+      <span>Settings</span>
+    </a>
+    
+    <a id="profile-button" class="tab-link" onclick="window.location.href='profile.html';">
+      <img src="profile.png" alt="Profile" class="icon">
+      <span>Profile</span>
+    </a>
+  </nav>
 
   <div class="content">
     <header>
       <h1>Astronaut Fitness Tracker</h1>
     </header>
     <main>
-      <!-- Log Fitness Data -->
+      <p>
+        Welcome to the Astronaut Fitness Tracker, your ultimate companion for staying fit and
+        tracking your progress. Select an option from the sidebar to get started!
+      </p>
       <section>
-        <h2>Log Fitness Data</h2>
-        <div class="inputs">
-          <div>
-            <label for="steps">Steps</label>
-            <input id="steps" type="number">
-          </div>
-          <div>
-            <label for="water">Water Intake (L)</label>
-            <input id="water" type="number" step="0.1">
-          </div>
-          <div>
-            <label for="sleep">Sleep (Hours)</label>
-            <input id="sleep" type="number" step="0.1">
-          </div>
-          <div>
-            <label for="calories">Calories Consumed</label>
-            <input id="calories" type="number">
-          </div>
-          <div>
-            <label for="foodItem">Food Item</label>
-            <input id="foodItem" type="text" placeholder="e.g. banana">
-          </div>
-          <div>
-            <label for="servings">Servings</label>
-            <input id="servings" type="number" step="0.1" min="1" placeholder="e.g. 1">
-          </div>
-        </div>
-        <button id="submit">Submit</button>
-      </section>
-
-      <!-- Fitness Logs Table -->
-      <section>
-        <h2>Fitness Logs</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Steps</th>
-              <th>Water Intake (L)</th>
-              <th>Sleep (Hours)</th>
-              <th>Calories Consumed</th>
-              <th>Food Item</th>
-              <th>Servings</th>
-            </tr>
-          </thead>
-          <tbody id="logsSection">
-            <!-- Logs will be dynamically injected here -->
-          </tbody>
-        </table>
-      </section>
-
-      <!-- Charts -->
-      <section>
-        <h2>Charts</h2>
-        <canvas id="nutritionChart"></canvas> <!-- 3D Pie Chart -->
-        <canvas id="caloriesChart"></canvas> <!-- Calories Bar Chart -->
-        <div id="stepsChart">
-          <h3>Steps, Water, and Sleep</h3>
-          <p>Steps: <span id="stepsValue">0</span></p>
-          <p>Water Intake: <span id="waterValue">0</span> L</p>
-          <p>Sleep: <span id="sleepValue">0</span> Hours</p>
-        </div>
+        <h2>Features</h2>
+        <ul>
+          <li>Log your daily fitness data</li>
+          <li>Track your weekly progress</li>
+          <li>Explore custom exercise routines</li>
+          <li>Analyze detailed statistics</li>
+          <li>Manage your profile and settings</li>
+        </ul>
       </section>
     </main>
   </div>
@@ -231,115 +179,6 @@ img.trophy-icon {
         "move": { "enable": true, "speed": 2, "direction": "none" }
       }
     });
-  </script>
-
-  <!-- Add JavaScript to handle Spoonacular API calls and chart rendering -->
-  <script>
-    const apiKey = 'b86ae26b7f844ead91ce96df1eb8df0c';  // Replace with your actual API key
-
-    async function fetchFoodData(foodItem) {
-      const url = `https://api.spoonacular.com/food/ingredients/search?query=${foodItem}&number=1&sort=calories&sortDirection=desc&apiKey=${apiKey}`;
-
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.results && data.results.length > 0) {
-          const food = data.results[0];
-          return {
-            name: food.name,
-            calories: food.nutrition?.calories || 0,
-            protein: food.nutrition?.protein || 0,
-            carbs: food.nutrition?.carbs || 0,
-            fat: food.nutrition?.fat || 0
-          };
-        } else {
-          return { name: 'Food not found', calories: 0, protein: 0, carbs: 0, fat: 0 };
-        }
-      } catch (error) {
-        console.error('Error fetching food data:', error);
-        return { name: 'Error', calories: 0, protein: 0, carbs: 0, fat: 0 };
-      }
-    }
-
-    // Chart setup
-    let foodData = { protein: 0, carbs: 0, fat: 0, calories: 0 };
-
-    document.getElementById('submit').addEventListener('click', async () => {
-      const steps = document.getElementById('steps').value;
-      const water = document.getElementById('water').value;
-      const sleep = document.getElementById('sleep').value;
-      const calories = document.getElementById('calories').value;
-      const foodItem = document.getElementById('foodItem').value;
-      const servings = document.getElementById('servings').value;
-
-      const foodData = await fetchFoodData(foodItem);
-      const totalCalories = foodData.calories * servings;
-
-      // Log fitness data including calories
-      const log = {
-        date: new Date().toLocaleDateString(),
-        steps,
-        water,
-        sleep,
-        calories: totalCalories,
-        foodItem,
-        servings
-      };
-
-      // Inject log into table
-      const tableBody = document.getElementById('logsSection');
-      const row = tableBody.insertRow();
-      row.innerHTML = `
-        <td>${log.date}</td>
-        <td>${log.steps}</td>
-        <td>${log.water}</td>
-        <td>${log.sleep}</td>
-        <td>${log.calories} (from ${log.foodItem} x${log.servings})</td>
-        <td>${log.foodItem}</td>
-        <td>${log.servings}</td>
-      `;
-
-      // Update charts
-      updateCharts(steps, water, sleep, totalCalories, foodData);
-    });
-
-    function updateCharts(steps, water, sleep, calories, foodData) {
-      // Update Text Chart
-      document.getElementById('stepsValue').textContent = steps;
-      document.getElementById('waterValue').textContent = water;
-      document.getElementById('sleepValue').textContent = sleep;
-
-      // Update Regular Chart (Calories)
-      const caloriesChart = new Chart(document.getElementById('caloriesChart'), {
-        type: 'bar',
-        data: {
-          labels: ['Calories'],
-          datasets: [{
-            label: 'Calories Consumed',
-            data: [calories],
-            backgroundColor: ['rgba(75, 192, 192, 0.2)'],
-            borderColor: ['rgba(75, 192, 192, 1)'],
-            borderWidth: 1
-          }]
-        }
-      });
-
-      // Update Pie Chart (Nutritional Info)
-      const nutritionChart = new Chart(document.getElementById('nutritionChart'), {
-        type: 'pie',
-        data: {
-          labels: ['Protein', 'Carbs', 'Fat'],
-          datasets: [{
-            label: 'Nutritional Info',
-            data: [foodData.protein, foodData.carbs, foodData.fat],
-            backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(153, 102, 255, 0.2)'],
-            borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 159, 64, 1)', 'rgba(153, 102, 255, 1)'],
-            borderWidth: 1
-          }]
-        }
-      });
-    }
   </script>
 </body>
 </html>
