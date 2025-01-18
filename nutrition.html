@@ -47,11 +47,50 @@
         <p>Serving Size: <span id="servingSize"></span></p>
       </section>
 
-      <section id="barcodeSection">
-        <h2>Scan a Barcode</h2>
-        <div id="reader" style="width: 300px; height: 300px;"></div>
-        <button id="startScan">Start Scanning</button>
-      </section>
+      <script>
+  const startScanBtn = document.getElementById('startScan');
+  const readerElement = document.getElementById('reader');
+
+  // Start barcode scanning
+  startScanBtn.addEventListener('click', () => {
+    const html5QrCode = new Html5Qrcode("reader");
+    
+    // Ensure the camera is initialized correctly
+    html5QrCode.start(
+      { facingMode: "environment" }, // Uses the back camera (recommended for barcode scanning)
+      { fps: 10, qrbox: 250 }, // 10 frames per second and the scanning area box size
+      (decodedText) => {
+        console.log("Decoded Text: ", decodedText); // Logs the scanned text (barcode data)
+        
+        // Now, let's fetch food information using the barcode
+        fetchFoodByBarcode(decodedText);
+      },
+      (errorMessage) => {
+        console.error("Error Message: ", errorMessage); // Handles any error
+      }
+    ).catch((err) => {
+      console.error("Failed to start the scanner: ", err);
+    });
+  });
+
+  // Fetch food by barcode using the API
+  async function fetchFoodByBarcode(barcode) {
+    try {
+      const response = await fetch(`${API_URL}?app_id=${APP_ID}&app_key=${API_KEY}&barcode=${barcode}`);
+      const data = await response.json();
+      
+      if (data.hints && data.hints.length > 0) {
+        displayFoodList(data.hints);
+      } else {
+        alert("No food found for this barcode.");
+      }
+    } catch (error) {
+      console.error("Error fetching food data:", error);
+      alert("An error occurred while fetching food data.");
+    }
+  }
+</script>
+
 
       <section id="foodChartSection">
         <h2>Logged Foods</h2>
