@@ -6,12 +6,13 @@
   <title>Today | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
+  <!-- Font Awesome CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Particles.js Script -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* Styling the particles background */
+    /* Styling for the particles background */
     #particles-js {
       position: absolute;
       top: 0;
@@ -25,56 +26,54 @@
     .content {
       position: relative;
       z-index: 1;
-      padding-top: 60px; /* Adjusted to ensure content isn't hidden under fixed navbar */
-    }
-
-    .inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    #stepsChart, #waterSleepChart {
-      width: 400px;
-      height: 400px;
+      padding-top: 60px;
     }
 
     /* Tab Bar Styles */
     .tabbar {
       background-color: #333;
-      overflow: hidden;
+      display: flex;
+      justify-content: space-around;
       position: fixed;
-      top: 0;
+      bottom: 0;
       width: 100%;
       z-index: 10;
-      display: flex;
-      justify-content: center;
     }
 
-    .tabbar a {
-      float: left;
-      display: block;
+    .tab-link {
       color: white;
       text-align: center;
-      padding: 14px 20px;
+      padding: 12px 16px;
       text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
-    .tabbar a:hover {
-      background-color: #ddd;
-      color: black;
+    .tab-link:hover {
+      background-color: #444;
     }
 
-    .tabbar .active {
+    .tab-link.active {
       background-color: #4CAF50;
       color: white;
     }
 
-    /* Tab bar responsive behavior */
-    @media (max-width: 600px) {
-      .tabbar a {
-        padding: 10px 15px;
-      }
+    .tab-link svg, .tab-link img {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Tab Bar Icon Styling */
+    .tab-link span {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .trophy-icon {
+      width: 20px;
+      height: 20px;
     }
   </style>
 </head>
@@ -83,12 +82,44 @@
 
   <!-- Fixed Navigation Bar -->
   <nav class="tabbar">
-    <a href="index.html">Home</a>
-    <a href="today.html" class="active">Today</a>
-    <a href="logs.html">Logs</a>
-    <a href="profile.html">Profile</a>
+    <a class="tab-link active" href="today.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
+      </svg>
+      <span>Today</span>
+    </a>
+    <a class="tab-link" href="week.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <span>Week</span>
+    </a>
+    <a class="tab-link" href="exercises.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      <span>Exercises</span>
+    </a>
+    <a class="tab-link" href="stats.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2-2 0 01-2-2z"></path>
+      </svg>
+      <span>Stats</span>
+    </a>
+    <a class="tab-link" href="achievements.html">
+      <img src="trophy.png" alt="Trophy Icon" class="trophy-icon">
+      <span>Achievements</span>
+    </a>
+    <a class="tab-link" href="settings.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path fill-rule="evenodd" fill="currentColor" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+      </svg>
+      <span>Settings</span>
+    </a>
   </nav>
 
+  <!-- Main Content -->
   <div class="content">
     <header>
       <h1>Log Your Sleep, Steps, and Water</h1>
@@ -128,116 +159,85 @@
               <th>Delete</th>
             </tr>
           </thead>
-          <tbody id="logsSection">
-            <!-- Logs will be dynamically injected here -->
-          </tbody>
+          <tbody id="logsTable"></tbody>
         </table>
-      </section>
-
-      <!-- Charts Section -->
-      <section>
-        <h2>Charts</h2>
-        <canvas id="stepsChart"></canvas> <!-- Steps Chart -->
-        <canvas id="waterSleepChart"></canvas> <!-- Water & Sleep Chart -->
       </section>
     </main>
   </div>
 
-  <!-- Particle.js Initialization -->
+  <script src="js/exercises.js"></script>
+
+  <!-- Particles.js Initialization -->
   <script>
     particlesJS('particles-js', {
       "particles": {
         "number": {
-          "value": 80,
+          "value": 80,  // Number of particles
           "density": {
             "enable": true,
             "value_area": 800
           }
         },
-        "color": { "value": "#ffffff" },
-        "shape": { "type": "circle" },
-        "size": { "value": 3, "random": true },
-        "move": { "enable": true, "speed": 2, "direction": "none" }
-      }
-    });
-  </script>
-
-  <!-- JavaScript to handle data logging and chart updates -->
-  <script>
-    document.getElementById('submit').addEventListener('click', () => {
-      const steps = document.getElementById('steps').value;
-      const water = document.getElementById('water').value;
-      const sleep = document.getElementById('sleep').value;
-
-      // Log data
-      const log = {
-        date: new Date().toLocaleDateString(),
-        steps,
-        water,
-        sleep
-      };
-
-      // Insert log into table
-      const tableBody = document.getElementById('logsSection');
-      const row = tableBody.insertRow();
-      row.innerHTML = `
-        <td>${log.date}</td>
-        <td>${log.steps}</td>
-        <td>${log.water}</td>
-        <td>${log.sleep}</td>
-        <td><button onclick="editRow(this)">Edit</button></td>
-        <td><button onclick="deleteRow(this)">Delete</button></td>
-      `;
-
-      // Update charts with new data
-      updateCharts(steps, water, sleep);
-    });
-
-    function editRow(button) {
-      const row = button.closest('tr');
-      const cells = row.getElementsByTagName('td');
-      document.getElementById('steps').value = cells[1].innerText;
-      document.getElementById('water').value = cells[2].innerText;
-      document.getElementById('sleep').value = cells[3].innerText;
-      row.remove();
-    }
-
-    function deleteRow(button) {
-      const row = button.closest('tr');
-      row.remove();
-    }
-
-    function updateCharts(steps, water, sleep) {
-      // Update the Steps Chart
-      const stepsChart = new Chart(document.getElementById('stepsChart'), {
-        type: 'bar',
-        data: {
-          labels: ['Steps'],
-          datasets: [{
-            label: 'Steps for Today',
-            data: [steps],
-            backgroundColor: ['rgba(75, 192, 192, 0.2)'],
-            borderColor: ['rgba(75, 192, 192, 1)'],
-            borderWidth: 1
-          }]
+        "color": {
+          "value": "#ffffff"  // Color of particles
+        },
+        "shape": {
+          "type": "circle",  // Shape of particles
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 1,
+            "opacity_min": 0.1,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 3,
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 4,
+            "size_min": 0.1,
+            "sync": false
+          }
+        },
+        "move": {
+          "enable": true,
+          "speed": 2,
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false,
+            "rotateX": 600,
+            "rotateY": 1200
+          }
         }
-      });
-
-      // Update the Water & Sleep Chart
-      const waterSleepChart = new Chart(document.getElementById('waterSleepChart'), {
-        type: 'bar',
-        data: {
-          labels: ['Water (L)', 'Sleep (Hours)'],
-          datasets: [{
-            label: 'Water and Sleep for Today',
-            data: [water, sleep],
-            backgroundColor: ['rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'],
-            borderColor: ['rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'],
-            borderWidth: 1
-          }]
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "repulse"
+          },
+          "onclick": {
+            "enable": true,
+            "mode": "push"
+          }
         }
-      });
-    }
+      },
+      "retina_detect": true
+    });
   </script>
 </body>
 </html>
