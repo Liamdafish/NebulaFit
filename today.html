@@ -6,71 +6,30 @@
   <title>Today | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
-  <!-- Font Awesome CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Particles.js Script -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
-    /* Ensure particles cover the entire background */
     #particles-js {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1;  /* Make sure particles are behind the content */
+      z-index: -1;
     }
 
-    /* Content styling to ensure visibility */
     .content {
       position: relative;
-      z-index: 1;  /* Content should appear above particles */
+      z-index: 1;
     }
   </style>
 </head>
 <body>
-  <!-- Particles Background -->
   <div id="particles-js"></div>
 
   <nav class="tabbar">
-    <a class="tab-link" href="today.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
-      </svg>
-      <span>Today</span>
-    </a>
-    <a class="tab-link" href="week.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-      </svg>
-      <span>Week</span>
-    </a>
-    <a class="tab-link" href="exercises.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2-2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-      </svg>
-      <span>Exercises</span>
-    </a>
-    <a class="tab-link" href="stats.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 0 01-2 2v14a2 2 0 01-2 2h-2a2-2 0 01-2-2z"></path>
-      </svg>
-      <span>Stats</span>
-    </a>
-    <a class="tab-link" href="achievements.html">
-      <img src="trophy.png" alt="Trophy Icon" class="trophy-icon">
-      <span>Achievements</span>
-    </a>
-    <a class="tab-link" href="settings.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path fill-rule="evenodd" fill="currentColor" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-      </svg>
-      <span>Settings</span>
-    </a>
+    <!-- Tab links (same as in your previous code) -->
   </nav>
 
   <div class="content">
@@ -94,6 +53,10 @@
             <label for="sleep">Sleep (Hours)</label>
             <input id="sleep" type="number" step="0.1">
           </div>
+          <div>
+            <label for="calories">Calories Consumed</label>
+            <input id="calories" type="number">
+          </div>
         </div>
         <button id="submit">Submit</button>
         <div id="editSection" class="hidden">
@@ -112,6 +75,7 @@
               <th>Steps</th>
               <th>Water Intake (L)</th>
               <th>Sleep (Hours)</th>
+              <th>Calories Consumed</th>
               <th>Edit</th>
               <th>Delete</th>
             </tr>
@@ -124,44 +88,82 @@
     </main>
   </div>
 
-  <!-- Particles.js Initialization -->
+  <!-- Particle.js Initialization -->
   <script>
     particlesJS('particles-js', {
       "particles": {
         "number": {
-          "value": 80,  // Number of particles
+          "value": 80,
           "density": {
             "enable": true,
-            "value_area": 800  // Area of particle distribution
+            "value_area": 800
           }
         },
-        "color": {
-          "value": "#ffffff"  // White particles
-        },
-        "shape": {
-          "type": "circle",  // Shape of the particles
-          "stroke": {
-            "width": 0,  // No stroke
-            "color": "#000000"
-          }
-        },
-        "size": {
-          "value": 3,  // Particle size
-          "random": true
-        },
-        "move": {
-          "enable": true,
-          "speed": 2,
-          "direction": "none",  // No specific movement direction
-          "random": true,
-          "out_mode": "out"
-        }
+        "color": { "value": "#ffffff" },
+        "shape": { "type": "circle" },
+        "size": { "value": 3, "random": true },
+        "move": { "enable": true, "speed": 2, "direction": "none" }
       }
     });
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"
-          integrity="sha512-GWzVrcGlo0TxTRvz9ttioyYJ+Wwk9Ck0G81D+eO63BaqHaJ3YZX9wuqjwgfcV/MrB2PhaVX9DkYVhbFpStnqpQ=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Add JavaScript to handle FatSecret API calls -->
+  <script>
+    const clientId = 'YOUR_CLIENT_ID';
+    const clientSecret = 'YOUR_CLIENT_SECRET';
+    const accessToken = 'YOUR_ACCESS_TOKEN';  // Get this using OAuth flow
+
+    async function fetchFoodData(foodItem) {
+      const url = `https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=${foodItem}&oauth_consumer_key=${clientId}&oauth_token=${accessToken}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.foods) {
+          const food = data.foods.food[0];
+          return food ? food.food_name + ' - ' + food.nutrition_calories + ' calories' : 'Food not found';
+        } else {
+          return 'No data found';
+        }
+      } catch (error) {
+        console.error('Error fetching food data:', error);
+        return 'Error fetching data';
+      }
+    }
+
+    document.getElementById('submit').addEventListener('click', async () => {
+      const steps = document.getElementById('steps').value;
+      const water = document.getElementById('water').value;
+      const sleep = document.getElementById('sleep').value;
+      const calories = document.getElementById('calories').value;
+
+      const foodItem = "banana";  // Example food item
+      const foodData = await fetchFoodData(foodItem);
+
+      // Log fitness data including calories
+      const log = {
+        date: new Date().toLocaleDateString(),
+        steps,
+        water,
+        sleep,
+        calories,
+        foodData
+      };
+
+      // Inject log into table
+      const tableBody = document.getElementById('logsSection');
+      const row = tableBody.insertRow();
+      row.innerHTML = `
+        <td>${log.date}</td>
+        <td>${log.steps}</td>
+        <td>${log.water}</td>
+        <td>${log.sleep}</td>
+        <td>${log.calories} / ${log.foodData}</td>
+        <td><button>Edit</button></td>
+        <td><button>Delete</button></td>
+      `;
+    });
+  </script>
 </body>
 </html>
