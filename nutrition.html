@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
-    /* Styling for the particles background */
+    /* Add your custom styles here */
     #particles-js {
       position: absolute;
       top: 0;
@@ -22,67 +22,11 @@
       z-index: -1;
     }
 
-    /* Content styles */
     .content {
       position: relative;
       z-index: 1;
-      padding-left: 270px; /* Adjusted to leave space for the tabbar */
+      padding-left: 270px;
       padding-top: 60px;
-    }
-
-    /* Sidebar Styling */
-    .tabbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: 250px;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(12px);
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      padding: 1rem 0;
-    }
-
-    img.trophy-icon {
-      width: 30px;
-      height: auto;
-      display: inline-block;
-      margin-bottom: 0;
-    }
-
-    .tabbar a {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      padding: 1rem;
-      color: #bbb;
-      transition: color 0.3s, background 0.3s;
-    }
-
-    .tabbar a:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #81c7f5;
-    }
-
-    .tabbar a.active {
-      background: rgba(81, 199, 245, 0.2);
-      color: #81c7f5;
-    }
-
-    .tabbar .icon {
-      width: 1.5rem;
-      height: 1.5rem;
-      margin-bottom: 0.5rem;
-      fill: currentColor;
-    }
-
-    .tabbar span {
-      font-size: 0.75rem;
-      text-transform: uppercase;
     }
 
     /* Nutrition Form Inputs */
@@ -93,11 +37,15 @@
       margin-bottom: 1rem;
     }
 
-    /* Table styling */
+    .table-container {
+      margin-top: 2rem;
+    }
+
+    /* Table Styling */
     table {
       width: 100%;
       border-collapse: collapse;
-      color: #fff; /* Set text color to white */
+      color: #fff;
     }
 
     table th, table td {
@@ -107,16 +55,16 @@
     }
 
     table th {
-      background-color: #333; /* Dark background for header */
-      color: #fff; /* White text color for the header */
+      background-color: #333;
+      color: #fff;
     }
 
     table tbody tr:nth-child(even) {
-      background-color: #444; /* Slightly lighter color for even rows */
+      background-color: #444;
     }
 
     table tbody tr:nth-child(odd) {
-      background-color: #333; /* Dark color for odd rows */
+      background-color: #333;
     }
 
     table th, table td {
@@ -132,91 +80,147 @@
   <div id="particles-js"></div>
 
   <nav class="tabbar">
-    <a class="tab-link" href="today.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
-      </svg>
-      <span>Today</span>
-    </a>
-
-    <a class="tab-link" href="week.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-      </svg>
-      <span>Week</span>
-    </a>
-
-    <a class="tab-link" href="exercises.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-      </svg>
-      <span>Exercises</span>
-    </a>
-
-    <a class="tab-link" href="stats.html">
-      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2-2 0 012-2h2a2-2 0 012 2v14a2-2 0 01-2 2h-2a-2 2-2 2z"></path>
-      </svg>
-      <span>Stats</span>
-    </a>
-
-    <a class="tab-link" href="achievements.html">
-      <img src="trophy.png" alt="Trophy Icon" class="trophy-icon">
-      <span>Achievements</span>
-    </a>
-
-    <a id="profile-button" class="tab-link" onclick="window.location.href='profile.html';">
-      <img src="profile.png" alt="Profile" class="icon">
-      <span>Profile</span>
-    </a>
+    <!-- Sidebar links here... -->
   </nav>
 
-  <!-- Main Content -->
   <div class="content">
     <header>
-      <h1>Log Your Nutrition Intake</h1>
+      <h1>Find Your Food and Log Nutrition</h1>
     </header>
+
     <main>
-      <!-- Log Nutrition Data -->
-      <section class="inputs">
-        <input type="date" name="date" id="date" class="input-field">
-        <input type="number" name="calories" id="calories" class="input-field" placeholder="Calories">
-        <input type="number" name="protein" id="protein" class="input-field" placeholder="Protein (g)">
-        <input type="number" name="carbs" id="carbs" class="input-field" placeholder="Carbs (g)">
-        <input type="number" name="fats" id="fats" class="input-field" placeholder="Fats (g)">
-        <button type="submit" class="submit-btn">Log</button>
+      <section>
+        <h2>Search for Food</h2>
+        <div class="inputs">
+          <div>
+            <label for="foodSearch">Food Item</label>
+            <input id="foodSearch" type="text" placeholder="Search for food..." />
+          </div>
+          <button id="searchButton">Search</button>
+        </div>
       </section>
 
-      <!-- Nutrition Logs Table -->
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Calories</th>
-            <th>Protein</th>
-            <th>Carbs</th>
-            <th>Fats</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2025-01-18</td>
-            <td>1200</td>
-            <td>50g</td>
-            <td>200g</td>
-            <td>40g</td>
-          </tr>
-          <tr>
-            <td>2025-01-17</td>
-            <td>1350</td>
-            <td>60g</td>
-            <td>150g</td>
-            <td>45g</td>
-          </tr>
-        </tbody>
-      </table>
+      <section class="table-container">
+        <h2>Nutrition Information</h2>
+        <table id="food-table">
+          <thead>
+            <tr>
+              <th>Food</th>
+              <th>Calories</th>
+              <th>Carbs (g)</th>
+              <th>Protein (g)</th>
+              <th>Fat (g)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Results will go here -->
+          </tbody>
+        </table>
+      </section>
     </main>
   </div>
+
+  <script>
+    const foodSearchInput = document.getElementById("foodSearch");
+    const searchButton = document.getElementById("searchButton");
+    const foodTable = document.getElementById("food-table").getElementsByTagName('tbody')[0];
+
+    // Edamam API credentials
+    const applicationID = "b0c02042";
+    const applicationKey = "c85342f02e2ce14196c6818dc0ec0d11";
+
+    const apiUrl = "https://api.edamam.com/api/food-database/v2/parser";
+
+    // Function to fetch food data from Edamam API
+    async function fetchFoodData(query) {
+      const response = await fetch(`${apiUrl}?app_id=${applicationID}&app_key=${applicationKey}&ingr=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      return data;
+    }
+
+    // Function to render food data in the table
+    function renderFoodData(foodData) {
+      const tbody = foodTable;
+      tbody.innerHTML = ""; // Clear previous results
+
+      if (!foodData || !foodData.hints) {
+        alert("No results found.");
+        return;
+      }
+
+      foodData.hints.forEach(item => {
+        const food = item.food;
+        const nutrients = food.nutrients;
+
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${food.label}</td>
+          <td>${nutrients.ENERC_KCAL || "N/A"} kcal</td>
+          <td>${nutrients.CHOCDF || "N/A"} g</td>
+          <td>${nutrients.PROCNT || "N/A"} g</td>
+          <td>${nutrients.FAT || "N/A"} g</td>
+        `;
+      });
+    }
+
+    // Handle the search button click
+    searchButton.addEventListener("click", async () => {
+      const query = foodSearchInput.value.trim();
+      if (!query) {
+        alert("Please enter a food item.");
+        return;
+      }
+
+      try {
+        const foodData = await fetchFoodData(query);
+        renderFoodData(foodData);
+      } catch (error) {
+        alert("Error fetching data from Edamam API.");
+        console.error(error);
+      }
+    });
+  </script>
+
+  <!-- Particles.js Initialization -->
+  <script>
+    particlesJS('particles-js', {
+      "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#ffffff" },
+        "shape": {
+          "type": "circle",
+          "stroke": { "width": 0, "color": "#000000" }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": true,
+          "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
+        },
+        "size": {
+          "value": 3,
+          "random": true,
+          "anim": { "enable": true, "speed": 4, "size_min": 0.1, "sync": false }
+        },
+        "move": {
+          "enable": true,
+          "speed": 2,
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 }
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": { "enable": true, "mode": "repulse" },
+          "onclick": { "enable": true, "mode": "push" }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
 </body>
 </html>
