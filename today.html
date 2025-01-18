@@ -111,6 +111,7 @@
               <th>Steps</th>
               <th>Water Intake (L)</th>
               <th>Sleep (Hours)</th>
+              <th>Food Log</th>
             </tr>
           </thead>
           <tbody id="logsSection">
@@ -195,6 +196,23 @@
       }
     }
 
+    // Function to add food log entry to the table
+    function addFoodLogEntry(foodData) {
+      const logsSection = document.getElementById('logsSection');
+      const currentDate = new Date().toLocaleDateString();
+
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td>${currentDate}</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>${foodData.name} - ${foodData.calories} kcal</td>
+      `;
+
+      logsSection.appendChild(newRow);
+    }
+
     document.getElementById('searchFood').addEventListener('click', async () => {
       const foodSearch = document.getElementById('foodSearch').value;
       if (!foodSearch) {
@@ -222,6 +240,9 @@
           <img src="https://spoonacular.com/recipeImages/${foodData.image}" alt="${foodData.name}" />
         `;
         foodResultsContainer.appendChild(foodResult);
+
+        // Add to the food log as well
+        addFoodLogEntry(foodData);
       } else {
         foodResultsContainer.innerHTML = '<p>No detailed information found for the given food item.</p>';
       }
