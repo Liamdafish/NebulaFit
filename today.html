@@ -84,6 +84,30 @@
       font-size: 0.75rem;
       text-transform: uppercase;
     }
+
+    /* Form inputs */
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th, table td {
+      padding: 8px 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #f4f4f4;
+    }
   </style>
 </head>
 <body>
@@ -166,6 +190,8 @@
               <th>Steps</th>
               <th>Water (L)</th>
               <th>Sleep (hrs)</th>
+              <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody id="log-table">
@@ -177,29 +203,112 @@
   </div>
 
   <script>
-    document.getElementById('submit').addEventListener('click', function() {
-      const steps = document.getElementById('steps').value;
-      const water = document.getElementById('water').value;
-      const sleep = document.getElementById('sleep').value;
+    const editIcon = `<i class="fas fa-edit"></i>`;
+    const deleteIcon = `<i class="fas fa-trash"></i>`;
 
-      if (steps && water && sleep) {
-        const table = document.getElementById('log-table');
-        const row = table.insertRow();
-        row.innerHTML = `
-          <td>${new Date().toLocaleDateString()}</td>
-          <td>${steps}</td>
-          <td>${water}</td>
-          <td>${sleep}</td>
+    let editIndex = -1;
+    let date = JSON.parse(localStorage.getItem("date")) || [];
+    let water = JSON.parse(localStorage.getItem("water")) || [];
+    let steps = JSON.parse(localStorage.getItem("steps")) || [];
+    let sleep = JSON.parse(localStorage.getItem("sleep")) || [];
+
+    const wInput = document.getElementById("water");
+    const eInput = document.getElementById("steps");
+    const sInput = document.getElementById("sleep");
+
+    const submitButton = document.getElementById("submit");
+    const logTable = document.getElementById("log-table");
+
+    function clearInputs() {
+      wInput.value = "";
+      eInput.value = "";
+      sInput.value = "";
+    }
+
+    function addToLocalStorage() {
+      localStorage.setItem("date", JSON.stringify(date));
+      localStorage.setItem("water", JSON.stringify(water));
+      localStorage.setItem("steps", JSON.stringify(steps));
+      localStorage.setItem("sleep", JSON.stringify(sleep));
+    }
+
+    function fillTable() {
+      const tbody = document.getElementById("log-table");
+      let html = "";
+      for (let i = 0; i < date.length; i++) {
+        let d = date[i] || "N/A";
+        let w = water[i] || "N/A";
+        let e = steps[i] || "N/A";
+        let s = sleep[i] || "N/A";
+        html += `
+          <tr>
+            <td>${d}</td>
+            <td>${w}</td>
+            <td>${e}</td>
+            <td>${s}</td>
+            <td><button onclick="activateEdit(${i})" class="edit">${editIcon}</button></td>
+            <td><button onclick="deleteRow(${i})" class="delete">${deleteIcon}</button></td>
+          </tr>
         `;
-        
-        // Clear input fields after submitting
-        document.getElementById('steps').value = '';
-        document.getElementById('water').value = '';
-        document.getElementById('sleep').value = '';
-      } else {
-        alert("Please fill in all fields.");
       }
+      tbody.innerHTML = html;
+    }
+
+    function activateEdit(i) {
+      wInput.value = water[i];
+      eInput.value = steps[i];
+      sInput.value = sleep[i];
+      editIndex = i;
+      submitButton.classList.add("hidden");
+    }
+
+    function cancelEdit() {
+      clearInputs();
+      editIndex = -1;
+      submitButton.classList.remove("hidden");
+    }
+
+    function editRow() {
+      if (editIndex === -1) return;
+      water[editIndex] = wInput.value;
+      steps[editIndex] = eInput.value;
+      sleep[editIndex] = sInput.value;
+      fillTable();
+      addToLocalStorage();
+      cancelEdit();
+    }
+
+    function deleteRow(i) {
+      if (!confirm(`Are you sure you want to delete the entry for ${date[i]}?`)) return;
+      date.splice(i, 1);
+      water.splice(i, 1);
+      steps.splice(i, 1);
+      sleep.splice(i, 1);
+      addToLocalStorage();
+      fillTable();
+    }
+
+    submitButton.addEventListener("click", () => {
+      const w = wInput.value;
+      const e = eInput.value;
+      const s = sInput.value;
+      if (!w || !e || !s) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const d = new Date().toLocaleDateString();
+      date.push(d);
+      water.push(w);
+      steps.push(e);
+      sleep.push(s);
+
+      clearInputs();
+      fillTable();
+      addToLocalStorage();
     });
+
+    fillTable();
   </script>
 
   <!-- Particles.js Initialization -->
@@ -207,12 +316,12 @@
     particlesJS('particles-js', {
       "particles": {
         "number": {
-          "value": 80, 
+          "value": 80,
           "density": { "enable": true, "value_area": 800 }
         },
         "color": { "value": "#ffffff" },
         "shape": {
-          "type": "circle", 
+          "type": "circle",
           "stroke": { "width": 0, "color": "#000000" }
         },
         "opacity": {
@@ -221,23 +330,23 @@
           "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
         },
         "size": {
-          "value": 3, 
-          "random": true, 
+          "value": 3,
+          "random": true,
           "anim": { "enable": true, "speed": 4, "size_min": 0.1, "sync": false }
         },
         "move": {
-          "enable": true, 
-          "speed": 2, 
-          "direction": "none", 
-          "random": true, 
-          "straight": false, 
-          "out_mode": "out", 
-          "bounce": false, 
+          "enable": true,
+          "speed": 2,
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
           "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 }
         }
       },
       "interactivity": {
-        "detect_on": "canvas", 
+        "detect_on": "canvas",
         "events": {
           "onhover": { "enable": true, "mode": "repulse" },
           "onclick": { "enable": true, "mode": "push" }
