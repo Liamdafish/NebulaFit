@@ -3,33 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barcode Scanner</title>
+  <title>Nutrition Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
       background-color: #f4f4f4;
     }
-
+    .tabbar {
+      display: flex;
+      justify-content: space-around;
+      background-color: #007bff;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+    .tabbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .content {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
     h1 {
       color: #333;
     }
-
-    #reader {
-      width: 300px;
-      height: 300px;
-      margin: 20px 0;
-      border: 2px solid #333;
-      border-radius: 10px;
-    }
-
     button {
       background-color: #007bff;
       color: white;
@@ -39,62 +45,192 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #0056b3;
     }
-
-    #output {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #444;
+    input[type="text"], input[type="number"] {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      width: calc(100% - 20px);
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #reader {
+      width: 300px;
+      height: 300px;
+      margin: 20px auto;
+      display: none;
+      border: 2px solid #333;
+      border-radius: 10px;
+    }
+    #foodList ul {
+      list-style: none;
+      padding: 0;
+    }
+    #foodList ul li {
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   </style>
 </head>
 <body>
-  <h1>Barcode Scanner</h1>
-  <button id="startScan">Start Scanning</button>
-  <div id="reader" style="display: none;"></div>
-  <p id="output"></p>
+  <nav class="tabbar">
+    <a href="today.html">Today</a>
+    <a href="week.html">Week</a>
+    <a href="nutrition.html">Nutrition</a>
+    <a href="exercises.html">Exercises</a>
+  </nav>
+
+  <div class="content">
+    <h1>Nutrition Tracker</h1>
+
+    <!-- Food Search Section -->
+    <section>
+      <h2>Search Food</h2>
+      <input type="text" id="foodSearch" placeholder="Search for food...">
+      <button id="searchFoodBtn">Search</button>
+    </section>
+
+    <!-- Food List Section -->
+    <section id="foodListSection" style="display: none;">
+      <h2>Food Results</h2>
+      <div id="foodList"></div>
+      <input type="number" id="foodServings" placeholder="Servings" min="1">
+      <button id="logFoodBtn">Log Food</button>
+    </section>
+
+    <!-- Barcode Scanner Section -->
+    <section>
+      <h2>Scan Barcode</h2>
+      <button id="startScanBtn">Start Barcode Scan</button>
+      <div id="reader"></div>
+    </section>
+
+    <!-- Logged Foods Section -->
+    <section>
+      <h2>Logged Foods</h2>
+      <canvas id="foodChart"></canvas>
+    </section>
+  </div>
 
   <script>
-    // Select DOM elements
-    const startScanBtn = document.getElementById('startScan');
-    const readerElement = document.getElementById('reader');
-    const outputElement = document.getElementById('output');
+    const API_URL = 'https://api.edamam.com/api/food-database/v2/parser';
+    const API_KEY = 'a00e1fa1cfc5ab2e105d054726b5b874';
+    const APP_ID = 'deeb16df';
 
-    let html5QrCode;
+    const searchFoodBtn = document.getElementById('searchFoodBtn');
+    const foodSearchInput = document.getElementById('foodSearch');
+    const foodListSection = document.getElementById('foodListSection');
+    const foodListDiv = document.getElementById('foodList');
+    const foodServingsInput = document.getElementById('foodServings');
+    const logFoodBtn = document.getElementById('logFoodBtn');
+    const startScanBtn = document.getElementById('startScanBtn');
+    const readerDiv = document.getElementById('reader');
+    const foodChartCanvas = document.getElementById('foodChart');
 
-    startScanBtn.addEventListener('click', () => {
-      if (!html5QrCode) {
-        html5QrCode = new Html5Qrcode("reader");
+    let selectedFood = null;
+    let loggedFoods = [];
+
+    // Search for food
+    searchFoodBtn.addEventListener('click', async () => {
+      const query = foodSearchInput.value.trim();
+      if (!query) return alert('Please enter a food to search for.');
+
+      const response = await fetch(`${API_URL}?app_id=${APP_ID}&app_key=${API_KEY}&ingr=${query}`);
+      const data = await response.json();
+
+      displayFoodList(data.hints);
+    });
+
+    // Display food list
+    function displayFoodList(foodItems) {
+      foodListDiv.innerHTML = '';
+      if (foodItems.length === 0) {
+        foodListDiv.innerHTML = '<p>No food found.</p>';
+        return;
       }
 
-      // Show the reader UI
-      readerElement.style.display = 'block';
-      outputElement.textContent = ''; // Clear any previous output
+      foodListSection.style.display = 'block';
+      foodItems.forEach(item => {
+        const food = item.food;
+        const foodDiv = document.createElement('div');
+        foodDiv.innerHTML = `
+          <li>
+            <span>${food.label}</span>
+            <button onclick="selectFood(${JSON.stringify(food.nutrients)}, '${food.label}')">Select</button>
+          </li>
+        `;
+        foodListDiv.appendChild(foodDiv);
+      });
+    }
 
-      // Start scanning
-      html5QrCode
-        .start(
-          { facingMode: "environment" }, // Use the back camera
-          { fps: 10, qrbox: 250 }, // Config options
-          (decodedText) => {
-            // Success callback
-            console.log("Scanned Code:", decodedText);
-            outputElement.textContent = `Scanned Code: ${decodedText}`;
-            html5QrCode.stop(); // Stop scanning after success
-            readerElement.style.display = 'none';
+    // Select food
+    window.selectFood = (nutrients, label) => {
+      selectedFood = { nutrients, label };
+      alert(`Selected: ${label}`);
+    };
+
+    // Log food
+    logFoodBtn.addEventListener('click', () => {
+      if (!selectedFood) return alert('Please select a food first.');
+      const servings = parseInt(foodServingsInput.value, 10) || 1;
+
+      const loggedFood = {
+        name: selectedFood.label,
+        calories: (selectedFood.nutrients.ENERC_KCAL || 0) * servings,
+        protein: (selectedFood.nutrients.PROCNT || 0) * servings,
+        fat: (selectedFood.nutrients.FAT || 0) * servings,
+        carbs: (selectedFood.nutrients.CHOCDF || 0) * servings,
+      };
+
+      loggedFoods.push(loggedFood);
+      renderChart();
+    });
+
+    // Render chart
+    function renderChart() {
+      const ctx = foodChartCanvas.getContext('2d');
+      const chartData = {
+        labels: loggedFoods.map(food => food.name),
+        datasets: [
+          {
+            label: 'Calories',
+            data: loggedFoods.map(food => food.calories),
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
           },
-          (errorMessage) => {
-            // Error callback
-            console.warn("QR Code scan error:", errorMessage);
-          }
-        )
-        .catch((err) => {
-          console.error("Error starting scanner:", err);
-          outputElement.textContent = `Error starting scanner: ${err}`;
-        });
+        ],
+      };
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+        options: { responsive: true, scales: { y: { beginAtZero: true } } },
+      });
+    }
+
+    // Barcode scanning
+    startScanBtn.addEventListener('click', () => {
+      const html5QrCode = new Html5Qrcode("reader");
+      readerDiv.style.display = 'block';
+
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        async (decodedText) => {
+          console.log("Barcode:", decodedText);
+          const response = await fetch(`${API_URL}?app_id=${APP_ID}&app_key=${API_KEY}&barcode=${decodedText}`);
+          const data = await response.json();
+          displayFoodList(data.hints);
+          html5QrCode.stop();
+          readerDiv.style.display = 'none';
+        },
+        (error) => console.error(error)
+      );
     });
   </script>
 </body>
