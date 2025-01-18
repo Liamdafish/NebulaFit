@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Astronaut Fitness Tracker</title>
+  <title>Today | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -25,94 +25,102 @@
       z-index: 1;
     }
 
-    #nutritionChart, #caloriesChart, #stepsChart {
-      width: 400px;
-      height: 400px;
-    }
-
     .inputs {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
+
+    .food-list {
+      margin-top: 20px;
+    }
+
+    .food-item {
+      padding: 10px;
+      background-color: #f0f0f0;
+      margin: 5px 0;
+      cursor: pointer;
+    }
+
+    .food-item:hover {
+      background-color: #e0e0e0;
+    }
+
+    #nutritionChart, #caloriesChart {
+      width: 400px;
+      height: 400px;
+    }
+
+    .tabbar {
+      background-color: #333;
+      overflow: hidden;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .tabbar a {
+      float: left;
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+    }
+
+    .tabbar a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    .tabbar .active {
+      background-color: #4CAF50;
+      color: white;
+    }
+
   </style>
 </head>
 <body>
   <div id="particles-js"></div>
 
+  <!-- Original Navbar -->
   <nav class="tabbar">
-    <!-- Tab links (same as in your previous code) -->
+    <a href="index.html">Home</a>
+    <a href="today.html" class="active">Today</a>
+    <a href="logs.html">Logs</a>
+    <a href="profile.html">Profile</a>
   </nav>
 
   <div class="content">
     <header>
-      <h1>Today</h1>
+      <h1>Log Your Food and Fitness</h1>
     </header>
     <main>
-      <!-- Log Fitness Data -->
+      <!-- Food Search Section -->
       <section>
-        <h2>Log Fitness Data</h2>
-        <div class="inputs">
-          <div>
-            <label for="steps">Steps</label>
-            <input id="steps" type="number">
-          </div>
-          <div>
-            <label for="water">Water Intake (L)</label>
-            <input id="water" type="number" step="0.1">
-          </div>
-          <div>
-            <label for="sleep">Sleep (Hours)</label>
-            <input id="sleep" type="number" step="0.1">
-          </div>
-          <div>
-            <label for="calories">Calories Consumed</label>
-            <input id="calories" type="number">
-          </div>
-          <div>
-            <label for="foodItem">Food Item</label>
-            <input id="foodItem" type="text" placeholder="e.g. banana">
-          </div>
-          <div>
-            <label for="servings">Servings</label>
-            <input id="servings" type="number" step="0.1" min="1" placeholder="e.g. 1">
-          </div>
+        <h2>Search for Food</h2>
+        <input type="text" id="foodSearch" placeholder="Search for food..." oninput="searchFood()">
+        <div id="foodList" class="food-list">
+          <!-- Food items will appear here -->
         </div>
-        <button id="submit">Submit</button>
       </section>
 
-      <!-- Fitness Logs Table -->
-      <section>
-        <h2>Fitness Logs</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Steps</th>
-              <th>Water Intake (L)</th>
-              <th>Sleep (Hours)</th>
-              <th>Calories Consumed</th>
-              <th>Food Item</th>
-              <th>Servings</th>
-            </tr>
-          </thead>
-          <tbody id="logsSection">
-            <!-- Logs will be dynamically injected here -->
-          </tbody>
-        </table>
+      <!-- Servings Input and Submit Button -->
+      <section id="foodDetailsSection" style="display: none;">
+        <h2>Food Details</h2>
+        <div>
+          <label for="servings">Servings</label>
+          <input type="number" id="servings" min="1" value="1" placeholder="Number of servings">
+        </div>
+        <button id="addFood" onclick="addFoodToLog()">Add Food</button>
       </section>
 
-      <!-- Charts -->
+      <!-- Charts Section -->
       <section>
         <h2>Charts</h2>
         <canvas id="nutritionChart"></canvas> <!-- 3D Pie Chart -->
         <canvas id="caloriesChart"></canvas> <!-- Calories Bar Chart -->
-        <div id="stepsChart">
-          <h3>Steps, Water, and Sleep</h3>
-          <p>Steps: <span id="stepsValue">0</span></p>
-          <p>Water Intake: <span id="waterValue">0</span> L</p>
-          <p>Sleep: <span id="sleepValue">0</span> Hours</p>
-        </div>
       </section>
     </main>
   </div>
@@ -136,9 +144,60 @@
     });
   </script>
 
-  <!-- Add JavaScript to handle Spoonacular API calls and chart rendering -->
+  <!-- JavaScript to handle food search, API calls, and chart updates -->
   <script>
-    const apiKey = 'b86ae26b7f844ead91ce96df1eb8df0c';  // Replace with your actual API key
+    const apiKey = 'b86ae26b7f844ead91ce96df1eb8df0c'; // Replace with your actual API key
+    let selectedFood = null;  // Store selected food details
+
+    async function searchFood() {
+      const query = document.getElementById('foodSearch').value;
+      const url = `https://api.spoonacular.com/food/ingredients/search?query=${query}&number=5&apiKey=${apiKey}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.results && data.results.length > 0) {
+          const foodList = document.getElementById('foodList');
+          foodList.innerHTML = '';  // Clear previous results
+
+          data.results.forEach((food, index) => {
+            const foodItem = document.createElement('div');
+            foodItem.className = 'food-item';
+            foodItem.innerText = food.name;
+            foodItem.onclick = () => selectFood(food);
+            foodList.appendChild(foodItem);
+          });
+        }
+      } catch (error) {
+        console.error('Error searching for food:', error);
+      }
+    }
+
+    function selectFood(food) {
+      selectedFood = food;
+      document.getElementById('foodSearch').value = food.name;
+      document.getElementById('foodDetailsSection').style.display = 'block';
+    }
+
+    async function addFoodToLog() {
+      const servings = parseFloat(document.getElementById('servings').value);
+      
+      if (selectedFood && servings > 0) {
+        const foodData = await fetchFoodData(selectedFood.name);
+
+        // Log food data
+        const totalCalories = foodData.calories * servings;
+
+        // Update charts
+        updateCharts(totalCalories, foodData);
+
+        // Reset form
+        document.getElementById('foodSearch').value = '';
+        document.getElementById('servings').value = 1;
+        document.getElementById('foodDetailsSection').style.display = 'none';
+      }
+    }
 
     async function fetchFoodData(foodItem) {
       const url = `https://api.spoonacular.com/food/ingredients/search?query=${foodItem}&number=1&sort=calories&sortDirection=desc&apiKey=${apiKey}`;
@@ -165,55 +224,23 @@
       }
     }
 
-    // Chart setup
-    let foodData = { protein: 0, carbs: 0, fat: 0, calories: 0 };
+    function updateCharts(calories, foodData) {
+      // Update Pie Chart (Nutritional Info)
+      const nutritionChart = new Chart(document.getElementById('nutritionChart'), {
+        type: 'pie',
+        data: {
+          labels: ['Protein', 'Carbs', 'Fat'],
+          datasets: [{
+            label: 'Nutritional Info',
+            data: [foodData.protein, foodData.carbs, foodData.fat],
+            backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+            borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 159, 64, 1)', 'rgba(153, 102, 255, 1)'],
+            borderWidth: 1
+          }]
+        }
+      });
 
-    document.getElementById('submit').addEventListener('click', async () => {
-      const steps = document.getElementById('steps').value;
-      const water = document.getElementById('water').value;
-      const sleep = document.getElementById('sleep').value;
-      const calories = document.getElementById('calories').value;
-      const foodItem = document.getElementById('foodItem').value;
-      const servings = document.getElementById('servings').value;
-
-      const foodData = await fetchFoodData(foodItem);
-      const totalCalories = foodData.calories * servings;
-
-      // Log fitness data including calories
-      const log = {
-        date: new Date().toLocaleDateString(),
-        steps,
-        water,
-        sleep,
-        calories: totalCalories,
-        foodItem,
-        servings
-      };
-
-      // Inject log into table
-      const tableBody = document.getElementById('logsSection');
-      const row = tableBody.insertRow();
-      row.innerHTML = `
-        <td>${log.date}</td>
-        <td>${log.steps}</td>
-        <td>${log.water}</td>
-        <td>${log.sleep}</td>
-        <td>${log.calories} (from ${log.foodItem} x${log.servings})</td>
-        <td>${log.foodItem}</td>
-        <td>${log.servings}</td>
-      `;
-
-      // Update charts
-      updateCharts(steps, water, sleep, totalCalories, foodData);
-    });
-
-    function updateCharts(steps, water, sleep, calories, foodData) {
-      // Update Text Chart
-      document.getElementById('stepsValue').textContent = steps;
-      document.getElementById('waterValue').textContent = water;
-      document.getElementById('sleepValue').textContent = sleep;
-
-      // Update Regular Chart (Calories)
+      // Update Bar Chart (Calories)
       const caloriesChart = new Chart(document.getElementById('caloriesChart'), {
         type: 'bar',
         data: {
@@ -221,22 +248,8 @@
           datasets: [{
             label: 'Calories Consumed',
             data: [calories],
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
-          }]
-        }
-      });
-
-      // Update 3D Pie Chart (Nutrition)
-      const nutritionChart = new Chart(document.getElementById('nutritionChart'), {
-        type: 'pie',
-        data: {
-          labels: ['Protein', 'Carbs', 'Fat'],
-          datasets: [{
-            data: [foodData.protein, foodData.carbs, foodData.fat],
-            backgroundColor: ['#FF5733', '#33FF57', '#3357FF'],
-            borderColor: ['#FF5733', '#33FF57', '#3357FF'],
+            backgroundColor: ['rgba(75, 192, 192, 0.2)'],
+            borderColor: ['rgba(75, 192, 192, 1)'],
             borderWidth: 1
           }]
         }
