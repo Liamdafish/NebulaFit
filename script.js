@@ -1,6 +1,6 @@
 // Icons for edit and delete buttons
-const editIcon = `<i class="fas fa-edit"></i>`
-const deleteIcon = `<i class="fas fa-trash"></i>`
+const editIcon = `<i class="fas fa-edit"></i>`;
+const deleteIcon = `<i class="fas fa-trash"></i>`;
 
 // Helper functions for inputs and storage
 function clearInputs() {
@@ -8,6 +8,7 @@ function clearInputs() {
   waterInput.value = "";
   sleepInput.value = "";
 }
+
 // Function to clear logs at midnight
 function resetLogsAtMidnight() {
   const lastReset = localStorage.getItem("lastResetDate"); // Get the last reset date
@@ -49,7 +50,9 @@ function clearLogs() {
 document.addEventListener("DOMContentLoaded", () => {
   resetLogsAtMidnight(); // Start the reset process
   fillTable(); // Populate the logs table if any logs exist
+  updateProgressTracker(); // Ensure progress tracker is initialized
 });
+
 function addToLocalStorage() {
   localStorage.setItem("date", JSON.stringify(date));
   localStorage.setItem("steps", JSON.stringify(steps));
