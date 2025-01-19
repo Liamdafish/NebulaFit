@@ -151,7 +151,7 @@
     
     <a class="tab-link" href="exercises.html">
       <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2-2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
       </svg>
       <span>Exercises</span>
     </a>
@@ -173,50 +173,171 @@
       <span>Achievements</span>
     </a>
 
-    
-    
     <a id="profile-button" class="tab-link" onclick="window.location.href='profile.html';">
       <img src="profile.png" alt="Profile" class="icon">
       <span>Profile</span>
     </a>
   </nav>
 
-  <!-- Main content for exercises -->
+  <!-- Main Content -->
   <div class="content">
-    <h1>Exercise Log</h1>
+    <header>
+      <h1>Log Your Exercises</h1>
+    </header>
+    <main>
+      <!-- Log Fitness Data Section -->
+      <section>
+        <h2>Log Your Exercise Data</h2>
+        <div class="inputs">
+          <div>
+            <label for="exercise-name">Exercise Name</label>
+            <input id="exercise-name" type="text">
+          </div>
+          <div>
+            <label for="reps">Reps</label>
+            <input id="reps" type="number">
+          </div>
+          <div>
+            <label for="sets">Sets</label>
+            <input id="sets" type="number">
+          </div>
+          <div>
+            <label for="weight">Weight (kg)</label>
+            <input id="weight" type="number">
+          </div>
+        </div>
+        <button id="submit" class="btn">Submit</button>
+      </section>
 
-    <div class="inputs">
-      <input type="text" placeholder="Exercise Name">
-      <input type="number" placeholder="Reps">
-      <input type="number" placeholder="Sets">
-      <input type="number" placeholder="Weight (kg)">
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Exercise</th>
-          <th>Reps</th>
-          <th>Sets</th>
-          <th>Weight</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Squat</td>
-          <td>10</td>
-          <td>3</td>
-          <td>80kg</td>
-        </tr>
-        <tr>
-          <td>Bench Press</td>
-          <td>8</td>
-          <td>3</td>
-          <td>70kg</td>
-        </tr>
-        <!-- More rows can go here -->
-      </tbody>
-    </table>
+      <!-- Exercise Logs Table -->
+      <section>
+        <h2>Exercise Logs</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Exercise</th>
+              <th>Reps</th>
+              <th>Sets</th>
+              <th>Weight</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="log-table">
+            <!-- Log entries will be displayed here -->
+          </tbody>
+        </table>
+      </section>
+    </main>
   </div>
+
+  <script>
+    const editIcon = `<i class="fas fa-edit"></i>`;
+    const deleteIcon = `<i class="fas fa-trash"></i>`;
+
+    let exerciseData = JSON.parse(localStorage.getItem("exerciseData")) || [];
+
+    const nameInput = document.getElementById("exercise-name");
+    const repsInput = document.getElementById("reps");
+    const setsInput = document.getElementById("sets");
+    const weightInput = document.getElementById("weight");
+
+    const submitButton = document.getElementById("submit");
+    const logTable = document.getElementById("log-table");
+
+    function clearInputs() {
+      nameInput.value = "";
+      repsInput.value = "";
+      setsInput.value = "";
+      weightInput.value = "";
+    }
+
+    function addToLocalStorage() {
+      localStorage.setItem("exerciseData", JSON.stringify(exerciseData));
+    }
+
+    function fillTable() {
+      const tbody = document.getElementById("log-table");
+      let html = "";
+      for (let i = 0; i < exerciseData.length; i++) {
+        let entry = exerciseData[i];
+        html += `
+          <tr>
+            <td>${entry.name}</td>
+            <td>${entry.reps}</td>
+            <td>${entry.sets}</td>
+            <td>${entry.weight}</td>
+            <td><button onclick="editRow(${i})" class="edit">${editIcon}</button></td>
+            <td><button onclick="deleteRow(${i})" class="delete">${deleteIcon}</button></td>
+          </tr>
+        `;
+      }
+      tbody.innerHTML = html;
+    }
+
+    function addNewEntry() {
+      const name = nameInput.value;
+      const reps = repsInput.value;
+      const sets = setsInput.value;
+      const weight = weightInput.value;
+
+      if (!name || !reps || !sets || !weight) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const newEntry = {
+        name,
+        reps,
+        sets,
+        weight
+      };
+
+      exerciseData.push(newEntry);
+      fillTable();
+      addToLocalStorage();
+      clearInputs();
+    }
+
+    function editRow(index) {
+      const entry = exerciseData[index];
+      nameInput.value = entry.name;
+      repsInput.value = entry.reps;
+      setsInput.value = entry.sets;
+      weightInput.value = entry.weight;
+
+      submitButton.textContent = "Save Changes";
+
+      submitButton.removeEventListener("click", addNewEntry);
+      submitButton.addEventListener("click", function saveChanges() {
+        entry.name = nameInput.value;
+        entry.reps = repsInput.value;
+        entry.sets = setsInput.value;
+        entry.weight = weightInput.value;
+
+        fillTable();
+        addToLocalStorage();
+        clearInputs();
+        submitButton.textContent = "Submit";
+        submitButton.removeEventListener("click", saveChanges);
+        submitButton.addEventListener("click", addNewEntry);
+      });
+    }
+
+    function deleteRow(index) {
+      if (!confirm(`Do you want to delete the exercise entry for ${exerciseData[index].name}?`)) {
+        return;
+      }
+
+      exerciseData.splice(index, 1);
+      fillTable();
+      addToLocalStorage();
+    }
+
+    submitButton.addEventListener("click", addNewEntry);
+
+    fillTable();
+  </script>
+
 </body>
 </html>
