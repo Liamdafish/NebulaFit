@@ -11,7 +11,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* Styling for the particles background */
     #particles-js {
       position: absolute;
       top: 0;
@@ -21,12 +20,17 @@
       z-index: -1;
     }
 
-    /* Content styles */
     .content {
       position: relative;
       z-index: 1;
-      padding-left: 270px;
-      padding-top: 60px;
+      margin-left: 250px; /* Adjust for the sidebar */
+      padding: 20px;
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
 
     /* Sidebar Styling */
@@ -35,13 +39,20 @@
       top: 0;
       left: 0;
       height: 100vh;
-      width: 250px;
+      width: 250px; /* Fixed width for the navbar */
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(12px);
       display: flex;
       flex-direction: column;
       align-items: stretch;
       padding: 1rem 0;
+    }
+
+    img.trophy-icon {
+      width: 30px;
+      height: auto;
+      display: inline-block;
+      margin-bottom: 0;
     }
 
     .tabbar a {
@@ -60,85 +71,21 @@
       color: #81c7f5;
     }
 
-    /* Nutrition search and options */
-    .nutrition-search {
-      margin: 1rem;
-      text-align: center;
+    .tabbar a.active {
+      background: rgba(81, 199, 245, 0.2);
+      color: #81c7f5;
     }
 
-    .nutrition-search input {
-      padding: 10px;
-      width: 80%;
-      border-radius: 5px;
-      border: none;
+    .tabbar .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-bottom: 0.5rem;
+      fill: currentColor;
     }
 
-    .nutrition-search ul {
-      background-color: white;
-      border: 1px solid #ccc;
-      max-height: 150px;
-      overflow-y: auto;
-      margin: 0;
-      padding: 0;
-      list-style-type: none;
-    }
-
-    .nutrition-search li {
-      padding: 8px;
-      cursor: pointer;
-    }
-
-    .nutrition-search li:hover {
-      background-color: #f0f0f0;
-    }
-
-    /* Nutrition Table */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      color: #fff;
-    }
-
-    table th, table td {
-      padding: 8px 12px;
-      text-align: center;
-      border: 1px solid #ddd;
-    }
-
-    table th {
-      background-color: #333;
-      color: #fff;
-    }
-
-    table tbody tr:nth-child(even) {
-      background-color: #444;
-    }
-
-    table tbody tr:nth-child(odd) {
-      background-color: #333;
-    }
-
-    table th, table td {
-      padding: 10px;
-    }
-
-    table th {
+    .tabbar span {
+      font-size: 0.75rem;
       text-transform: uppercase;
-    }
-
-    /* Chart container */
-    .chart-container {
-      width: 100%;
-      max-width: 600px;
-      margin: 20px auto;
-    }
-
-    /* Image Styling */
-    .food-image {
-      max-width: 80px;
-      max-height: 80px;
-      margin-right: 10px;
     }
   </style>
 </head>
@@ -146,7 +93,45 @@
   <div id="particles-js"></div>
 
   <nav class="tabbar">
-    <!-- Your existing navbar here -->
+    <!-- Sidebar Links -->
+    <a class="tab-link" href="today.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
+      </svg>
+      <span>Today</span>
+    </a>
+    
+    <a class="tab-link" href="week.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <span>Week</span>
+    </a>
+    
+    <a class="tab-link" href="exercises.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      <span>Exercises</span>
+    </a>
+    
+    <a class="tab-link" href="stats.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2-2 0 012-2h2a2-2 0 012 2v14a2-2 0 01-2 2h-2a-2 2-2 2z"></path>
+      </svg>
+      <span>Stats</span>
+    </a>
+    
+    <a class="tab-link" href="achievements.html">
+      <img src="trophy.png" alt="Trophy Icon" class="trophy-icon">
+      <span>Achievements</span>
+    </a>
+    
+    <a id="profile-button" class="tab-link" onclick="window.location.href='profile.html';">
+      <img src="profile.png" alt="Profile" class="icon">
+      <span>Profile</span>
+    </a>
   </nav>
 
   <div class="content">
