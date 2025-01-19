@@ -46,6 +46,13 @@ img.trophy-icon {
   margin-bottom: 0;
 }
 
+img.nutrition-icon {
+  width: 30px;
+  height: auto;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
 .tabbar a {
   display: flex;
   flex-direction: column;
