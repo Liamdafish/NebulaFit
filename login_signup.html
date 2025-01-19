@@ -5,7 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login & Signup | Astronaut Fitness Tracker</title>
   <style>
-    /* General styles... */
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #1b2735, #090a0f);
+      color: #f5f5f5;
+      position: relative;
+    }
 
     #particles-js {
       position: absolute;
@@ -16,21 +32,205 @@
       z-index: -1;
     }
 
+    .wrapper {
+      max-width: 400px;
+      width: 100%;
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .slide-controls {
+      position: relative;
+      display: flex;
+      height: 50px;
+      width: 100%;
+      margin: 20px 0;
+      justify-content: space-between;
+      border: 1px solid #555;
+      border-radius: 10px;
+    }
+
+    .slide-controls .slide {
+      height: 100%;
+      width: 100%;
+      font-size: 1rem;
+      text-align: center;
+      line-height: 48px;
+      cursor: pointer;
+      z-index: 1;
+      transition: all 0.6s ease;
+    }
+
+    .slide-controls label.signup {
+      color: #999;
+    }
+
+    .slide-controls .slider-tab {
+      position: absolute;
+      height: 100%;
+      width: 50%;
+      left: 0;
+      z-index: 0;
+      border-radius: 10px;
+      background-image: linear-gradient(to right, #ec4899, #8b5cf6);
+      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    #signup:checked ~ .slider-tab {
+      left: 50%;
+    }
+
+    #signup:checked ~ label.signup {
+      color: white;
+    }
+
+    #login:checked ~ label.signup {
+      color: #999;
+    }
+
+    #login:checked ~ label.login {
+      color: white;
+    }
+
+    .form-container {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .form-inner {
+      display: flex;
+      width: 200%;
+    }
+
+    .form-inner form {
+      width: 50%;
+      transition: all 0.6s ease;
+    }
+
+    .field {
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px;
+      background: #262626;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .field input:focus {
+      outline: 2px solid #ec4899;
+    }
+
+    .field input::placeholder {
+      color: #9ca3af;
+    }
+
+    .pass-link {
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .pass-link a,
+    .signup-link a {
+      color: #81c7f5;
+      text-decoration: none;
+    }
+
+    .pass-link a:hover,
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+
+    .btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-image: linear-gradient(to right, #ec4899, #8b5cf6);
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+      transform: scale(1.02);
+    }
   </style>
 </head>
 <body>
-  <div id="particles-js"></div> <!-- Particle container -->
+  <div id="particles-js"></div>
+
   <div class="wrapper">
-    <!-- Form content... -->
+    <div class="slide-controls">
+      <input type="radio" name="slide" id="login" checked>
+      <input type="radio" name="slide" id="signup">
+      <label for="login" class="slide login">Login</label>
+      <label for="signup" class="slide signup">Signup</label>
+      <div class="slider-tab"></div>
+    </div>
+    <div class="form-container">
+      <div class="form-inner">
+        <!-- Login Form -->
+        <form action="#" class="login">
+          <div class="field">
+            <input type="text" id="login-email" placeholder="Email Address" required>
+          </div>
+          <div class="field">
+            <input type="password" id="login-password" placeholder="Password" required>
+          </div>
+          <div class="pass-link">
+            <a href="#">Forgot password?</a>
+          </div>
+          <div class="btn">
+            Login
+          </div>
+        </form>
+
+        <!-- Signup Form -->
+        <form action="#" class="signup">
+          <div class="field">
+            <input type="text" id="signup-name" placeholder="Full Name" required>
+          </div>
+          <div class="field">
+            <input type="email" id="signup-email" placeholder="Email Address" required>
+          </div>
+          <div class="field">
+            <input type="password" id="signup-password" placeholder="Password" required>
+          </div>
+          <div class="btn">
+            Signup
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
-  <!-- Particles.js script -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
     particlesJS("particles-js", {
       particles: {
         number: {
-          value: 100,
+          value: 80,
           density: {
             enable: true,
             value_area: 800
@@ -43,12 +243,12 @@
           type: "circle",
           stroke: {
             width: 0,
-            color: "#ffffff"
+            color: "#000000"
           }
         },
         opacity: {
           value: 0.5,
-          random: true,
+          random: false,
           anim: {
             enable: true,
             speed: 1,
@@ -61,7 +261,7 @@
           random: true,
           anim: {
             enable: true,
-            speed: 2,
+            speed: 40,
             size_min: 0.1,
             sync: false
           }
@@ -75,7 +275,7 @@
         },
         move: {
           enable: true,
-          speed: 2,
+          speed: 3,
           direction: "none",
           random: false,
           straight: false,
@@ -93,6 +293,25 @@
           onclick: {
             enable: true,
             mode: "push"
+          },
+          resize: true
+        },
+        modes: {
+          grab: {
+            distance: 400,
+            line_linked: {
+              opacity: 1
+            }
+          },
+          repulse: {
+            distance: 200,
+            duration: 0.4
+          },
+          push: {
+            particles_nb: 4
+          },
+          remove: {
+            particles_nb: 2
           }
         }
       },
