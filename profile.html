@@ -107,9 +107,8 @@
       <input type="number" id="weight" value="" />
     </div>
     <div class="profile-section">
-      <label>Height (ft, in):</label>
-      <input type="number" id="height-feet" placeholder="Feet" />
-      <input type="number" id="height-inches" placeholder="Inches" />
+      <label>Height (inches):</label>
+      <input type="number" id="height-inches" placeholder="Enter your height in inches" />
     </div>
     <div class="profile-section">
       <label>BMI:</label>
@@ -141,7 +140,6 @@
       document.getElementById("email").textContent = user.email;
       document.getElementById("age").value = user.age || "";
       document.getElementById("weight").value = user.weight || "";
-      document.getElementById("height-feet").value = user.heightFeet || "";
       document.getElementById("height-inches").value = user.heightInches || "";
       document.getElementById("bmi").textContent = user.bmi || "N/A";
     });
@@ -156,17 +154,15 @@
 
       const age = document.getElementById("age").value;
       const weight = document.getElementById("weight").value;
-      const heightFeet = document.getElementById("height-feet").value;
       const heightInches = document.getElementById("height-inches").value;
       const newPassword = document.getElementById("new-password").value;
 
       if (age) user.age = age;
       if (weight) user.weight = weight;
-      if (heightFeet) user.heightFeet = heightFeet;
       if (heightInches) user.heightInches = heightInches;
 
       // Calculate BMI
-      const heightInMeters = ((heightFeet * 12) + parseInt(heightInches)) * 0.0254;
+      const heightInMeters = heightInches * 0.0254;
       user.bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
 
       if (newPassword) user.password = btoa(newPassword);
