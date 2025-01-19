@@ -13,7 +13,7 @@
   <!-- Particles.js Script -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
- <style>
+  <style>
     #particles-js {
       position: absolute;
       top: 0;
@@ -90,6 +90,20 @@
       font-size: 0.75rem;
       text-transform: uppercase;
     }
+
+    /* Weekly log styling */
+    #weeklyLogs {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #weeklyLogs li {
+      background: #2c3e50;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -113,7 +127,7 @@
     
     <a class="tab-link" href="exercises.html">
       <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2-2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
       </svg>
       <span>Exercises</span>
     </a>
@@ -130,13 +144,11 @@
       <span>Achievements</span>
     </a>
     
-    
     <a id="profile-button" class="tab-link" onclick="window.location.href='profile.html';">
       <img src="profile.png" alt="Profile" class="icon">
       <span>Profile</span>
     </a>
   </nav>
-
 
   <!-- Main Content -->
   <div class="content">
@@ -151,10 +163,74 @@
     </main>
   </div>
 
-  <script src="js/week.js"></script>
-
-  <!-- Particles.js Initialization -->
   <script>
+    // Function to retrieve a cookie by name
+    function getCookie(name) {
+      let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) {
+        return JSON.parse(decodeURIComponent(match[2])); // Return the cookie value parsed as JSON
+      }
+      return null;
+    }
+
+    // Function to set a cookie
+    function setCookie(name, value, days) {
+      const d = new Date();
+      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000)); // Expire in 'days' days
+      let expires = "expires=" + d.toUTCString();
+      document.cookie = name + "=" + encodeURIComponent(JSON.stringify(value)) + ";" + expires + ";path=/";
+    }
+
+    // Function to calculate the weekly average
+    function calculateWeeklyAverage(data) {
+      let total = 0;
+      let count = data.length;
+
+      // Sum the values in the data array
+      data.forEach(day => {
+        total += day.value; // assuming each day's data is an object with a "value" property
+      });
+
+      // Return the average
+      return total / count;
+    }
+
+    // Function to update the weekly log and calculate the average
+    function updateWeeklyData() {
+      // Fetch the weekly data from cookies
+      const weeklyData = getCookie('weeklyData');
+
+      if (weeklyData && Array.isArray(weeklyData)) {
+        // Calculate the average for the week
+        const average = calculateWeeklyAverage(weeklyData);
+        const weeklyLogs = document.getElementById('weeklyLogs');
+        
+        // Clear the previous logs
+        weeklyLogs.innerHTML = '';
+
+        // Display the data for the week
+        weeklyData.forEach(day => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `Day: ${day.date}, Value: ${day.value}`;
+          weeklyLogs.appendChild(listItem);
+        });
+
+        // Display the average
+        const averageItem = document.createElement('li');
+        averageItem.textContent = `Average for the Week: ${average.toFixed(2)}`;
+        weeklyLogs.appendChild(averageItem);
+      } else {
+        // No data available in the cookies
+        const message = document.createElement('li');
+        message.textContent = 'No data available for the past week.';
+        document.getElementById('weeklyLogs').appendChild(message);
+      }
+    }
+
+    // Call the function to update the weekly data on page load
+    document.addEventListener('DOMContentLoaded', updateWeeklyData);
+
+    // Particles.js Initialization
     particlesJS('particles-js', {
       "particles": {
         "number": {
@@ -188,6 +264,5 @@
       }
     });
   </script>
-
 </body>
 </html>
