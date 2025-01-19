@@ -20,16 +20,6 @@
       font-family: 'Inter', sans-serif;
       background: radial-gradient(circle at top, #1b2735, #090a0f);
       color: #f5f5f5;
-      position: relative;
-    }
-
-    #particles-js {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
     }
 
     .wrapper {
@@ -178,145 +168,109 @@
   </style>
 </head>
 <body>
-  <div id="particles-js"></div>
-
-  <div class="wrapper">
-    <div class="slide-controls">
-      <input type="radio" name="slide" id="login" checked>
-      <input type="radio" name="slide" id="signup">
-      <label for="login" class="slide login">Login</label>
-      <label for="signup" class="slide signup">Signup</label>
-      <div class="slider-tab"></div>
-    </div>
-    <div class="form-container">
-      <div class="form-inner">
-        <!-- Login Form -->
-        <form action="#" class="login">
-          <div class="field">
-            <input type="text" id="login-email" placeholder="Email Address" required>
-          </div>
-          <div class="field">
-            <input type="password" id="login-password" placeholder="Password" required>
-          </div>
-          <div class="pass-link">
-            <a href="#">Forgot password?</a>
-          </div>
-          <div class="btn">
-            Login
-          </div>
-        </form>
-
-        <!-- Signup Form -->
-        <form action="#" class="signup">
-          <div class="field">
-            <input type="text" id="signup-name" placeholder="Full Name" required>
-          </div>
-          <div class="field">
-            <input type="email" id="signup-email" placeholder="Email Address" required>
-          </div>
-          <div class="field">
-            <input type="password" id="signup-password" placeholder="Password" required>
-          </div>
-          <div class="btn">
-            Signup
-          </div>
-        </form>
-      </div>
+<div class="wrapper">
+  <div class="slide-controls">
+    <input type="radio" name="slide" id="login" checked>
+    <input type="radio" name="slide" id="signup">
+    <label for="login" class="slide login">Login</label>
+    <label for="signup" class="slide signup">Signup</label>
+    <div class="slider-tab"></div>
+  </div>
+  <div class="form-container">
+    <div class="form-inner">
+      <form action="#" class="login">
+        <div class="field">
+          <input type="text" id="login-email" placeholder="Email Address" required>
+        </div>
+        <div class="field">
+          <input type="password" id="login-password" placeholder="Password" required>
+        </div>
+        <div class="pass-link"><a href="forgot_password.html">Forgot password?</a></div>
+        <button type="submit" class="btn">Login</button>
+      </form>
+      <form action="#" class="signup">
+        <div class="field">
+          <input type="text" id="signup-email" placeholder="Email Address" required>
+        </div>
+        <div class="field">
+          <input type="password" id="signup-password" placeholder="Password" required>
+        </div>
+        <div class="field">
+          <input type="password" id="signup-confirm-password" placeholder="Confirm password" required>
+        </div>
+        <button type="submit" class="btn">Signup</button>
+      </form>
     </div>
   </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <script>
-    particlesJS("particles-js", {
-      particles: {
-        number: {
-          value: 80,
-          density: {
-            enable: true,
-            value_area: 800
-          }
-        },
-        color: {
-          value: "#ffffff"
-        },
-        shape: {
-          type: "circle",
-          stroke: {
-            width: 0,
-            color: "#000000"
-          }
-        },
-        opacity: {
-          value: 0.5,
-          random: false,
-          anim: {
-            enable: true,
-            speed: 1,
-            opacity_min: 0.1,
-            sync: false
-          }
-        },
-        size: {
-          value: 3,
-          random: true,
-          anim: {
-            enable: true,
-            speed: 40,
-            size_min: 0.1,
-            sync: false
-          }
-        },
-        line_linked: {
-          enable: true,
-          distance: 150,
-          color: "#ffffff",
-          opacity: 0.4,
-          width: 1
-        },
-        move: {
-          enable: true,
-          speed: 3,
-          direction: "none",
-          random: false,
-          straight: false,
-          out_mode: "out",
-          bounce: false
-        }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: {
-            enable: true,
-            mode: "repulse"
-          },
-          onclick: {
-            enable: true,
-            mode: "push"
-          },
-          resize: true
-        },
-        modes: {
-          grab: {
-            distance: 400,
-            line_linked: {
-              opacity: 1
-            }
-          },
-          repulse: {
-            distance: 200,
-            duration: 0.4
-          },
-          push: {
-            particles_nb: 4
-          },
-          remove: {
-            particles_nb: 2
-          }
-        }
-      },
-      retina_detect: true
-    });
-  </script>
+<script>
+  const loginForm = document.querySelector("form.login");
+  const signupForm = document.querySelector("form.signup");
+  const signupBtn = document.querySelector("label.signup");
+  const loginBtn = document.querySelector("label.login");
+
+  signupBtn.onclick = () => {
+    loginForm.style.marginLeft = "-50%";
+  };
+
+  loginBtn.onclick = () => {
+    loginForm.style.marginLeft = "0%";
+  };
+
+  signupForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("signup-email").value;
+    const password = document.getElementById("signup-password").value;
+    const confirmPassword = document.getElementById("signup-confirm-password").value;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    if (users.some((user) => user.email === email)) {
+      alert("User already exists. Please login.");
+      return;
+    }
+
+    // Add user to localStorage and set first-time flag
+    users.push({ email, password: btoa(password), firstTime: true });
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("Signup successful! Please login.");
+    loginBtn.click();
+  });
+
+  loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find((user) => user.email === email);
+
+    if (user && atob(user.password) === password) {
+      sessionStorage.setItem("currentUser", email);
+
+      // Redirect based on whether the user is logging in for the first time
+      if (user.firstTime) {
+        // Update the user's first-time flag
+        user.firstTime = false;
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Login successful! Please complete your BMI information.");
+        window.location.href = "bmi.html";
+      } else {
+        alert("Login successful!");
+        window.location.href = "index.html";
+      }
+    } else {
+      alert("Invalid credentials.");
+    }
+  });
+</script>
+
 </body>
 </html>
