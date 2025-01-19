@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Today | Astronaut Fitness Tracker</title>
+  <title>Daily | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
   <!-- Font Awesome CSS -->
@@ -113,7 +113,7 @@
     
     <a class="tab-link" href="exercises.html">
       <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2-2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
       </svg>
       <span>Exercises</span>
     </a>
@@ -130,13 +130,11 @@
       <span>Achievements</span>
     </a>
     
-    
     <a id="profile-button" class="tab-link" onclick="window.location.href='profile.html';">
       <img src="profile.png" alt="Profile" class="icon">
       <span>Profile</span>
     </a>
   </nav>
-
 
   <!-- Main Content -->
   <div class="content">
@@ -146,7 +144,9 @@
     <main>
       <section>
         <h2>Daily Space Progress</h2>
-        <p>Track your progress as you move between planets.</p>
+        <p>Track your daily progress as you move between planets.</p>
+        <!-- Placeholder for charts or daily progress indicators -->
+        <canvas id="daily-progress-chart"></canvas>
       </section>
     </main>
   </div>
@@ -221,6 +221,24 @@
         }
       },
       "retina_detect": true
+    });
+  </script>
+
+  <!-- Daily Progress Chart (using Chart.js for example) -->
+  <script>
+    const ctx = document.getElementById('daily-progress-chart').getContext('2d');
+    const dailyChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Planet 1', 'Planet 2', 'Planet 3', 'Planet 4', 'Planet 5'], // Example labels for progress
+        datasets: [{
+          label: 'Daily Progress',
+          data: [12, 19, 3, 5, 2], // Example data, replace with real daily progress data
+          fill: false,
+          borderColor: '#81c7f5',
+          tension: 0.1
+        }]
+      }
     });
   </script>
 </body>
