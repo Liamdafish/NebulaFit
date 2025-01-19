@@ -116,6 +116,7 @@
   </div>
 
   <script>
+    // Function to calculate BMI
     function calculateBMI() {
       const weight = document.getElementById("weight").value;
       const heightFeet = document.getElementById("height-feet").value;
@@ -129,14 +130,11 @@
       // Convert height to inches
       const totalHeightInInches = (heightFeet * 12) + parseInt(heightInches);
 
-      // Convert height to meters
-      const heightInMeters = totalHeightInInches * 0.0254;
-
-      // Calculate BMI
-      const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
+      // Calculate BMI using the Imperial System formula
+      const bmi = (703 * weight) / (totalHeightInInches * totalHeightInInches);
 
       // Display BMI result
-      document.getElementById("bmi-result").textContent = bmi;
+      document.getElementById("bmi-result").textContent = bmi.toFixed(2);
 
       // Save the BMI and user data into localStorage
       const currentUser = sessionStorage.getItem("currentUser");
@@ -146,11 +144,12 @@
         user.weight = weight;
         user.heightFeet = heightFeet;
         user.heightInches = heightInches;
-        user.bmi = bmi;
+        user.bmi = bmi.toFixed(2);
         localStorage.setItem("users", JSON.stringify(users));
       }
     }
 
+    // Function to navigate to next page
     function goToNextPage() {
       const currentUser = sessionStorage.getItem("currentUser");
       const users = JSON.parse(localStorage.getItem("users")) || [];
