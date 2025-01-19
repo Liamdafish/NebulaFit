@@ -3,142 +3,211 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile | Astronaut Fitness Tracker</title>
+  <title>Exercises | Astronaut Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Particles.js Script -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
   <style>
-    /* Styles omitted for brevity */
+    /* Styling for the particles background */
+    #particles-js {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* Content styles */
+    .content {
+      position: relative;
+      z-index: 1;
+      padding-left: 270px; /* Adjusted to leave space for the tabbar */
+      padding-top: 60px;
+    }
+
+    /* Sidebar Styling */
+    .tabbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 250px; /* Fixed width for the navbar */
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1rem 0;
+    }
+
+    img.trophy-icon {
+      width: 30px;
+      height: auto;
+      display: inline-block;
+      margin-bottom: 0;
+    }
+
+    .tabbar a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      padding: 1rem;
+      color: #bbb;
+      transition: color 0.3s, background 0.3s;
+    }
+
+    .tabbar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #81c7f5;
+    }
+
+    .tabbar a.active {
+      background: rgba(81, 199, 245, 0.2);
+      color: #81c7f5;
+    }
+
+    .tabbar .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-bottom: 0.5rem;
+      fill: currentColor;
+    }
+
+    .tabbar span {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    /* Form inputs */
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #fff; /* Set text color to white */
+    }
+
+    table th, table td {
+      padding: 8px 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #333; /* Dark background for header */
+      color: #fff; /* White text color for the header */
+    }
+
+    table tbody tr:nth-child(even) {
+      background-color: #444; /* Slightly lighter color for even rows */
+    }
+
+    table tbody tr:nth-child(odd) {
+      background-color: #333; /* Dark color for odd rows */
+    }
+
+    table th, table td {
+      padding: 10px;
+    }
+
+    table th {
+      text-transform: uppercase;
+    }
+
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1 id="welcome-message">Hello, [username]</h1>
-    <div class="profile-section">
-      <label>Email:</label>
-      <p id="email">example@example.com</p>
-    </div>
-    <div class="profile-section">
-      <label>Age:</label>
-      <input type="number" id="age" value="" />
-    </div>
-    <div class="profile-section">
-      <label>Weight (lbs):</label>
-      <input type="number" id="weight" value="" />
-    </div>
-    <div class="profile-section">
-      <label>Height (ft, in):</label>
-      <input type="number" id="height-feet" placeholder="Feet" />
-      <input type="number" id="height-inches" placeholder="Inches" />
-    </div>
-    <div class="profile-section">
-      <label>BMI:</label>
-      <p id="bmi">N/A</p>
-    </div>
-    <div class="profile-section">
-      <label>Recommended Exercise:</label>
-      <p id="exercise-recommendation">N/A</p>
-    </div>
-    <div class="profile-section">
-      <label>New Password:</label>
-      <input type="password" id="new-password" placeholder="Enter new password" />
-    </div>
-    <button class="btn" onclick="saveProfile()">Save Changes</button>
-    <button id="next-btn" class="btn" onclick="goToNextPage()">Next</button>
-    <button id="logout-btn" class="btn" onclick="logout()">Logout</button>
-  </div>
+  <div id="particles-js"></div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const currentUser = sessionStorage.getItem("currentUser");
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const user = users.find((u) => u.email === currentUser);
+  <!-- Sidebar (Navbar) from Today page -->
+  <nav class="tabbar">
+    <a class="tab-link" href="today.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
+      </svg>
+      <span>Today</span>
+    </a>
+    
+    <a class="tab-link" href="week.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <span>Week</span>
+    </a>
+    
+    <a class="tab-link" href="exercises.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2-2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2-2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      <span>Exercises</span>
+    </a>
+    
+    <a class="tab-link" href="stats.html">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2-2 0 012-2h2a2-2 0 012 2v14a2-2 0 01-2 2h-2a-2 2-2 2z"></path>
+      </svg>
+      <span>Stats</span>
+    </a>
+    
+    <a class="tab-link" href="achievements.html">
+      <img src="trophy.png" alt="Trophy Icon" class="trophy-icon">
+      <span>Achievements</span>
+    </a>
+    
+    <a id="profile-button" class="tab-link" onclick="window.location.href='profile.html';">
+      <img src="profile.png" alt="
+Profile Icon" class="profile-icon"> <span>Profile</span> </a>
 
-      if (!user) {
-        alert("User not found. Please log in.");
-        window.location.href = "login_signup.html";
-        return;
-      }
+</nav> <!-- Main content for exercises --> <div class="content"> <h1>Exercise Log</h1>
+php
+Copy
+Edit
+<div class="inputs">
+  <input type="text" placeholder="Exercise Name">
+  <input type="number" placeholder="Reps">
+  <input type="number" placeholder="Sets">
+  <input type="number" placeholder="Weight (kg)">
+</div>
 
-      document.getElementById("welcome-message").textContent = `Hello, ${user.email.split("@")[0]}`;
-      document.getElementById("email").textContent = user.email;
-      document.getElementById("age").value = user.age || "";
-      document.getElementById("weight").value = user.weight || "";
-      document.getElementById("height-feet").value = user.heightFeet || "";
-      document.getElementById("height-inches").value = user.heightInches || "";
-      document.getElementById("bmi").textContent = user.bmi || "N/A";
-    });
-
-    function saveProfile() {
-      const currentUser = sessionStorage.getItem("currentUser");
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const user = users.find((u) => u.email === currentUser);
-
-      if (!user) return;
-
-      const age = document.getElementById("age").value;
-      const weight = document.getElementById("weight").value;
-      const heightFeet = document.getElementById("height-feet").value;
-      const heightInches = document.getElementById("height-inches").value;
-      const newPassword = document.getElementById("new-password").value;
-
-      if (age) user.age = age;
-      if (weight) user.weight = weight;
-      if (heightFeet) user.heightFeet = heightFeet;
-      if (heightInches) user.heightInches = heightInches;
-
-      const heightInMeters = ((heightFeet * 12) + parseInt(heightInches)) * 0.0254;
-      user.bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
-
-      const calorieRecommendation = calculateCalories(user.bmi, user.age);
-      user.recommendedExercise = generateExerciseRecommendation(calorieRecommendation);
-
-      if (newPassword) user.password = btoa(newPassword);
-
-      localStorage.setItem("users", JSON.stringify(users));
-      alert("Profile updated successfully!");
-      document.getElementById("bmi").textContent = user.bmi;
-      document.getElementById("exercise-recommendation").textContent = user.recommendedExercise;
-    }
-
-    function calculateCalories(bmi, age) {
-      const baseCalories = 2000;  // Basic estimate for average adults
-      let adjustedCalories = baseCalories;
-
-      // Adjust calories based on BMI range
-      if (bmi < 18.5) {
-        adjustedCalories -= 200;  // If underweight, lower intake
-      } else if (bmi >= 25) {
-        adjustedCalories += 300;  // If overweight, higher intake
-      }
-
-      // Adjust further based on age
-      if (age < 30) {
-        adjustedCalories += 100;
-      } else if (age > 50) {
-        adjustedCalories -= 100;
-      }
-
-      return adjustedCalories;
-    }
-
-    function generateExerciseRecommendation(calories) {
-      if (calories < 2200) {
-        return "Focus on fat-burning exercises like running, cycling, or swimming.";
-      } else if (calories > 2500) {
-        return "Consider strength training, weightlifting, or bodyweight exercises.";
-      } else {
-        return "Maintain a balanced exercise routine with both cardio and strength training.";
-      }
-    }
-
-    function goToNextPage() {
-      window.location.href = "index.html";
-    }
-
-    function logout() {
-      sessionStorage.removeItem("currentUser");
-      window.location.href = "login_signup.html";
-    }
-  </script>
+<table>
+  <thead>
+    <tr>
+      <th>Exercise</th>
+      <th>Reps</th>
+      <th>Sets</th>
+      <th>Weight</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Squat</td>
+      <td>10</td>
+      <td>3</td>
+      <td>80kg</td>
+    </tr>
+    <tr>
+      <td>Bench Press</td>
+      <td>8</td>
+      <td>3</td>
+      <td>70kg</td>
+    </tr>
+    <!-- More rows can go here -->
+  </tbody>
+</table>
+</div> 
 </body>
 </html>
